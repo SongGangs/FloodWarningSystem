@@ -59,13 +59,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="utility\AccessDataBase.cs" />
-    <Compile Include="WeatherHelper\GetWeatherImpl.cs" />
-    <Compile Include="WeatherHelper\IGetWeather.cs" />
-    <Compile Include="WeatherHelper\ISaveWeather.cs" />
+    <Compile Include="WeatherHelper\IWeatherHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherMsg.cs" />
     <Compile Include="WeatherHelper\IWeatherUtil.cs" />
-    <Compile Include="WeatherHelper\SaveWeatherImpl.cs" />
     <Compile Include="WeatherHelper\WeatherDayMsg.cs" />
+    <Compile Include="WeatherHelper\WeatherHandlerImpl.cs" />
     <Compile Include="WeatherHelper\WeatherHoursMsg.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

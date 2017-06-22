@@ -4,6 +4,7 @@ using System.Data.OleDb;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using FWS.WeatherHelper;
 
 
 namespace FWS.utility
@@ -201,18 +202,33 @@ namespace FWS.utility
         /// <returns></returns>
         public  string GetCodeByName(string name)
         {
-            string sql = "select a.AreaCode,b.ProvinceCode from Area a join Province b on a.ProvinceID=b.ID where a.AreaName=@AreaName";
-            SqlParameter[] sqlParameters = new[]
-            {
-                new SqlParameter("@AreaName", SqlDbType.Text)
-            };
-            sqlParameters[0].Value = name;
+            string sql =
+                "SELECT Area.AreaCode,Province.ProvinceCode FROM Area, Province where Area.ProvinceID = Province.ID and Area.AreaName = '" +
+                name + "'";
+            /*  string sql = "select a.AreaCode,b.ProvinceCode from Area a join Province b on a.ProvinceID=b.ID where a.AreaName=@AreaName";
+              SqlParameter[] sqlParameters = new[]
+              {
+                  new SqlParameter("@AreaName", SqlDbType.Text)
+              };
+              sqlParameters[0].Value = name;*/
             DataSet ds = ReturnDataSet(sql);
             if (ds.Tables[0].Rows.Count > 0)
                 return ds.Tables[0].Rows[0]["ProvinceCode"] + "/" + ds.Tables[0].Rows[0]["AreaCode"];
             return null;
         }
-
+        /// <summary>
+        /// 根据地区名字获取对应的识别码
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public int GetAreaIDByName(string name)
+        {
+            string sql = "select ID from Area where AreaName='"+name+"'";
+            DataSet ds = ReturnDataSet(sql);
+            if (ds.Tables[0].Rows.Count > 0)
+                return int.Parse(ds.Tables[0].Rows[0]["ID"].ToString());
+            return 0;
+        }
         /// <summary>
         /// 删除数据
         /// </summary>

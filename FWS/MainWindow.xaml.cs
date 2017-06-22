@@ -31,8 +31,10 @@ namespace FWS
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             
-            IGetWeather getWeather=new GetWeatherImpl();
-            List<IWeatherMsg>list= getWeather.GetWeatherByName("ASC/nanchong");
+            IWeatherHandler weatherObj=new WeatherHandlerImpl();
+            List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");
+            weatherObj.DeleteWeatherMsg("南充");
+            weatherObj.SaveWeatherMsg(list,"南充");
             //Uri url =new Uri("http://www.nmc.cn/f/rest/passed/56079");  http://www.nmc.cn/publish/forecast/ASC/nanchong.html
 
         }
