@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 
 namespace FWS.utility
@@ -23,13 +24,11 @@ namespace FWS.utility
         /// 构造函数：数据库的默认连接
         /// </summary>
         public AccessDataBase()
-{
-
-            
+        {
             string connStr;
- 
+
             connStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
- //connStr = System.Configuration.con.AppSettings["ConnectionString"].ToString(); //从web.config配置中读取
+            //connStr = System.Configuration.con.AppSettings["ConnectionString"].ToString(); //从web.config配置中读取
 
             connectionString = connStr;
 //connectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + HttpContext.Current.Request.PhysicalapplicationPath + connStr;
@@ -37,7 +36,7 @@ namespace FWS.utility
 //
 
             Connection = new OleDbConnection(connectionString);
-}
+        }
 
         /// <summary>
         /// 构造函数：带有参数的数据库连接
@@ -55,10 +54,7 @@ namespace FWS.utility
         /// </summary>
         public string ConnectionString
         {
-            get
-            {
-                return connectionString;
-            }
+            get { return connectionString; }
         }
 
 
@@ -80,7 +76,6 @@ namespace FWS.utility
                 command.ExecuteNonQuery();
                 myTrans.Commit();
                 resultState = true;
-               
             }
             catch
             {
@@ -159,23 +154,17 @@ namespace FWS.utility
 
         public void coloseCon()
         {
-         
             Connection.Close();
         }
 
-       /// <summary>
-       /// 批量数据
-       /// </summary>
-       /// <param name="sqlArray"></param>
-
-        public void insertToAccessByBatch(List<string> sqlArray)//String[]
+        /// <summary>
+        /// 批量数据
+        /// </summary>
+        /// <param name="sqlArray"></param>
+        public void insertToAccessByBatch(List<string> sqlArray) //String[]
         {
-
             try
             {
-
-
-
                 //OleDbConnection aConnection = new OleDbConnection(DB.getConnectStr());
 
                 //aConnection.Open();
@@ -188,27 +177,40 @@ namespace FWS.utility
                 int count = sqlArray.Count;
                 for (int i = 0; i < count; i++)
                 {
-
                     aCommand.CommandText = sqlArray[i];
                     aCommand.ExecuteNonQuery();
 
-              //      LogHelper.log(Convert.ToString(i));
-
+                    //      LogHelper.log(Convert.ToString(i));
                 }
 
                 transaction.Commit();
 
                 Connection.Close();
-
             }
 
             catch (Exception e)
             {
-
-              //  LogHelper.log(e.Message);
-           
+                //  LogHelper.log(e.Message);
             }
+        }
 
+        /// <summary>
+        /// 根据地区名字获取对应的网页地址
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public  string GetCodeByName(string name)
+        {
+            string sql = "select a.AreaCode,b.ProvinceCode from Area a join Province b on a.ProvinceID=b.ID where a.AreaName=@AreaName";
+            SqlParameter[] sqlParameters = new[]
+            {
+                new SqlParameter("@AreaName", SqlDbType.Text)
+            };
+            sqlParameters[0].Value = name;
+            DataSet ds = ReturnDataSet(sql);
+            if (ds.Tables[0].Rows.Count > 0)
+                return ds.Tables[0].Rows[0]["ProvinceCode"] + "/" + ds.Tables[0].Rows[0]["AreaCode"];
+            return null;
         }
 
         /// <summary>
@@ -222,7 +224,6 @@ namespace FWS.utility
             odc.ExecuteNonQuery();
             Connection.Close();
         }
-
     }
 
 
