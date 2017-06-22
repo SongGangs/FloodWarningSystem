@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FWS.temp;
 using FWS.WeatherHelper;
 
 namespace FWS
@@ -30,11 +31,12 @@ namespace FWS
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+           // CatchHelper.GetAndSaveArea();
+            /*
             IWeatherHandler weatherObj=new WeatherHandlerImpl();
             List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");
             weatherObj.DeleteWeatherMsg("南充");
-            weatherObj.SaveWeatherMsg(list,"南充");
+            weatherObj.SaveWeatherMsg(list,"南充");*/
             //Uri url =new Uri("http://www.nmc.cn/f/rest/passed/56079");  http://www.nmc.cn/publish/forecast/ASC/nanchong.html
 
         }

@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="temp\CatchHelper.cs" />
     <Compile Include="utility\AccessDataBase.cs" />
     <Compile Include="WeatherHelper\IWeatherHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherMsg.cs" />
@@ -108,6 +109,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="HtmlAgilityPack.dll" />
+    <Content Include="temp\province.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
