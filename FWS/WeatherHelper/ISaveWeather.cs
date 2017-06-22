@@ -9,15 +9,10 @@ namespace FWS.WeatherHelper
    public interface ISaveWeather
    {
        /// <summary>
-       /// 存储今天的天气
+       /// 存储天气
        /// </summary>
        /// <param name="msg"></param>
-       void SaveWeatherDayMsg(WeatherDayMsg msg);
-       /// <summary>
-       /// 存储每个小时的天气
-       /// </summary>
-       /// <param name="msg"></param>
-       void SaveWeatherHoursMsg(WeatherHoursMsg msg);
+       void SaveWeatherMsg(IWeatherMsg msg);
 
    }
 }

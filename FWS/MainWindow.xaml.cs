@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FWS.WeatherHelper;
 
 namespace FWS
 {
@@ -24,5 +27,15 @@ namespace FWS
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            
+            IGetWeather getWeather=new GetWeatherImpl();
+            List<IWeatherMsg>list= getWeather.GetWeatherByName("ASC/nanchong");
+            //Uri url =new Uri("http://www.nmc.cn/f/rest/passed/56079");  http://www.nmc.cn/publish/forecast/ASC/nanchong.html
+
+        }
+      
     }
 }

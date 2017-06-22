@@ -34,7 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,10 +58,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="utility\AccessDataBase.cs" />
+    <Compile Include="WeatherHelper\GetWeatherImpl.cs" />
+    <Compile Include="WeatherHelper\IGetWeather.cs" />
     <Compile Include="WeatherHelper\ISaveWeather.cs" />
-    <Compile Include="WeatherHelper\IWeather.cs" />
+    <Compile Include="WeatherHelper\IWeatherMsg.cs" />
+    <Compile Include="WeatherHelper\IWeatherUtil.cs" />
+    <Compile Include="WeatherHelper\SaveWeatherImpl.cs" />
     <Compile Include="WeatherHelper\WeatherDayMsg.cs" />
-    <Compile Include="WeatherHelper\WeatherImpl.cs" />
     <Compile Include="WeatherHelper\WeatherHoursMsg.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -98,8 +107,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="utility\" />
+    <Content Include="HtmlAgilityPack.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
