@@ -13,6 +13,14 @@ namespace FWS.WeatherHelper
 {
     class WeatherHandlerImpl:IWeatherHandler
     {
+
+        /// <summary>
+        /// 为什么这个mdb这么奇怪
+        /// 各种sql语句语法错误呀！！
+        /// 明明时正确的  
+        /// 反而要用一些奇葩的语句！
+        /// </summary>
+
         private string url = "http://www.nmc.cn/publish/forecast/";
         private AccessDataBase db=new AccessDataBase();
         public List<IWeatherMsg> GetWeatherByName(string name)
@@ -119,6 +127,8 @@ namespace FWS.WeatherHelper
             throw new NotImplementedException();
         }
 
+
+      
         public void SaveWeatherMsg(List<IWeatherMsg> msglist,string name)
         {
             List<string> sqllist = new List<string>();
@@ -134,12 +144,20 @@ namespace FWS.WeatherHelper
                 if (msglist[i].flag==1)//小时
                 {
                     WeatherHoursMsg hoursMsg=msglist[i] as WeatherHoursMsg;
-                    sql = String.Format("INSERT INTO HoursRainInfo (time,temperature,rains,wind,windL,humidity,AreaID) VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", hoursMsg.time, hoursMsg.temperature, hoursMsg.rains, hoursMsg.wind, hoursMsg.windL, hoursMsg.humidity,id);
+                    sql =
+                        String.Format(
+                            "INSERT INTO HoursRainInfo ([time],[temperature],[rains],[wind],[windL],[humidity],[AreaID]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+                            hoursMsg.time, hoursMsg.temperature, hoursMsg.rains, hoursMsg.wind, hoursMsg.windL,
+                            hoursMsg.humidity, id);
                 }
                 else
                 {
                     WeatherDayMsg dayMsg = msglist[i] as WeatherDayMsg;
-                    sql = String.Format("INSERT INTO DayRainInfo (time,maxTemp,minTemp,wind,windL,alarmmsg,weatherStatus,AreaID) VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", dayMsg.time, dayMsg.maxTemp, dayMsg.minTemp, dayMsg.wind, dayMsg.windL, dayMsg.alarmmsg,dayMsg.weatherStatus, id);
+                    sql =
+                        String.Format(
+                            "INSERT INTO DayRainInfo ([time],[maxTemp],[minTemp],[wind],[windL],[alarmmsg],[weatherStatus],[AreaID]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
+                            dayMsg.time, dayMsg.maxTemp, dayMsg.minTemp, dayMsg.wind, dayMsg.windL, dayMsg.alarmmsg,
+                            dayMsg.weatherStatus, id);
                 }
                 sqllist.Add(sql);
             }

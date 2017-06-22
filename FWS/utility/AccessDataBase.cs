@@ -26,16 +26,8 @@ namespace FWS.utility
         /// </summary>
         public AccessDataBase()
         {
-            string connStr;
-
-            connStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
-            //connStr = System.Configuration.con.AppSettings["ConnectionString"].ToString(); //从web.config配置中读取
-
+            string connStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
             connectionString = connStr;
-//connectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + HttpContext.Current.Request.PhysicalapplicationPath + connStr;
-// connectionString = System.Configuration.ConfigurationSettings.AppSettings["ConnectionString"].ToString();
-//
-
             Connection = new OleDbConnection(connectionString);
         }
 
@@ -45,7 +37,6 @@ namespace FWS.utility
         /// <param name="newConnectionString"></param>
         public AccessDataBase(string newConnectionString)
         {
-            //connectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + HttpContext.Current.Request.PhysicalApplicationPath + newConnectionString;
             connectionString = newConnectionString;
             Connection = new OleDbConnection(connectionString);
         }
@@ -115,8 +106,7 @@ namespace FWS.utility
             Connection.Open();
             DataSet dataSet = new DataSet();
             OleDbDataAdapter OleDbDA = new OleDbDataAdapter(strSQL, Connection);
-            OleDbDA.Fill(dataSet, "objDataSet");
-
+            OleDbDA.Fill(dataSet);
             Connection.Close();
             return dataSet;
         }
