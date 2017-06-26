@@ -60,6 +60,9 @@
     </ApplicationDefinition>
     <Compile Include="temp\CatchHelper.cs" />
     <Compile Include="utility\AccessDataBase.cs" />
+    <Compile Include="WeatherHelper\EarthquakeHandlerImpl.cs" />
+    <Compile Include="WeatherHelper\EarthquakrMsg.cs" />
+    <Compile Include="WeatherHelper\IEarthquakeHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherMsg.cs" />
     <Compile Include="WeatherHelper\IWeatherUtil.cs" />

@@ -47,11 +47,22 @@ namespace FWS.WeatherHelper
             htmls.Descendants()
                 .Where(n => n.Name == "script" || n.Name == "style" || n.Name == "#comment")
                 .ToList().ForEach(n => n.Remove());*/
-            for (int k = 1; k < htmls.Count; k++)
+            for (int k = 0; k < htmls.Count; k++)
             {
                 dayMsg = new WeatherDayMsg();
                 var tr = htmls[k].ChildNodes[1].ChildNodes[1].ChildNodes;
                 dayMsg.alarmmsg = doc.DocumentNode.SelectNodes("//a[@id='realWarn']").First().InnerHtml;
+                if (k == 0 && tr[5].ChildNodes.Count == 3)
+                {
+
+                    dayMsg.time = DateTime.Parse(tr[1].ChildNodes[3].InnerText.Trim());
+                    dayMsg.weatherStatus = tr[5].ChildNodes[1].InnerText.Trim();
+                    dayMsg.minTemp = tr[7].ChildNodes[1].InnerText.Trim();
+                    dayMsg.wind = tr[9].ChildNodes[1].InnerText.Trim();
+                    dayMsg.windL = tr[11].ChildNodes[1].InnerText.Trim();
+                    List.Add(dayMsg);
+                    continue;
+                }
                 for (int i = 0; i < tr.Count; i++)
                 {
                     switch (i)
@@ -167,9 +178,9 @@ namespace FWS.WeatherHelper
         public void DeleteWeatherMsg(string name)
         {
             int id = db.GetAreaIDByName(name);
-            string sql = "DELETE FROM HoursRainInfo WHERE AreaID = '" + id + "'";
+            string sql = "DELETE  FROM HoursRainInfo WHERE AreaID = " + id ;
             db.deleteDt(sql);
-            sql = "DELETE FROM DayRainInfo WHERE AreaID = '" + id + "'";
+            sql = "DELETE  FROM DayRainInfo WHERE AreaID = " + id ;
             db.deleteDt(sql);
         }
     }
