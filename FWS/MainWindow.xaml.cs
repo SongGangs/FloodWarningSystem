@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FWS.EarthquakeHelper;
 using FWS.temp;
 using FWS.WeatherHelper;
 
@@ -32,7 +33,9 @@ namespace FWS
         private void Button_Click(object sender, RoutedEventArgs e)
         {
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
-            earthquakeObj.GetEarthquakrMsgs();
+           List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
+           earthquakeObj.DeleteEarthquakrMsgs();
+           earthquakeObj.SaveEarthquakrMsgs(list);
             /* 
             IWeatherHandler weatherObj=new WeatherHandlerImpl();
             List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");

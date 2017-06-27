@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FWS.WeatherHelper
+namespace FWS.EarthquakeHelper
 {
     /// <summary>
     /// 地震信息
     /// </summary>
-   public class EarthquakrMsg
+   public class EarthquakeMsg
     {
        /// <summary>
        /// 震级

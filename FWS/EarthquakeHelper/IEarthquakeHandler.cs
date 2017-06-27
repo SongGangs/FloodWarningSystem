@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FWS.WeatherHelper
+namespace FWS.EarthquakeHelper
 {
     public interface IEarthquakeHandler
     {
@@ -14,12 +14,12 @@ namespace FWS.WeatherHelper
         /// 最近一个月的
         /// </summary>
         /// <returns></returns>
-        List<EarthquakrMsg> GetEarthquakrMsgs();
+        List<EarthquakeMsg> GetEarthquakrMsgs();
         /// <summary>
         /// 存储到数据库
         /// </summary>
         /// <param name="list">读取的地震信息</param>
-        void SaveEarthquakrMsgs( List<EarthquakrMsg> list);
+        void SaveEarthquakrMsgs( List<EarthquakeMsg> list);
         /// <summary>
         /// 删除记录
         /// </summary>
