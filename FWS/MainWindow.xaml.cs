@@ -30,19 +30,26 @@ namespace FWS
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
+            this.TempPanel.Visibility = Visibility.Visible;
+            /* 
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
            List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
            earthquakeObj.DeleteEarthquakrMsgs();
            earthquakeObj.SaveEarthquakrMsgs(list);
-            /* 
+            
             IWeatherHandler weatherObj=new WeatherHandlerImpl();
             List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");
             weatherObj.DeleteWeatherMsg("南充");
             weatherObj.SaveWeatherMsg(list,"南充");*/
 
 
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.NowTime.Content = DateTime.Now.ToLongDateString()+"    " + DateTime.Now.ToLongTimeString();
         }
       
     }

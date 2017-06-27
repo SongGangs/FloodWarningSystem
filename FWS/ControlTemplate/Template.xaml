@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTemplate x:Key="EarlyWarningMsgBtnTemplate" TargetType="{x:Type Button}">
+        <Border BorderBrush="#FF3DBFBE" BorderThickness="0,0,1,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="../Images/earlywarning.png"></Image>
+                <Label Content="预警信息" Style="{StaticResource TopMenuStyle}"></Label>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+    <ControlTemplate x:Key="WeatherMsgBtnTemplate" TargetType="{x:Type Button}">
+        <Border BorderBrush="#FF7AEFEE" BorderThickness="0,0,1,0" Margin="30,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="../Images/weather.jpg"></Image>
+                <Label Content="天气预报" Style="{StaticResource TopMenuStyle}"></Label>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+    <ControlTemplate x:Key="EarthquakeMsgBtnTemplate" TargetType="{x:Type Button}">
+        <Border BorderBrush="#FF7AEFEE" BorderThickness="0,0,1,0" Margin="30,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="../Images/earthquake.gif"></Image>
+                <Label Content="地震信息" Style="{StaticResource TopMenuStyle}"></Label>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+    <ControlTemplate x:Key="InqueryMsgBtnTemplate" TargetType="{x:Type Button}">
+        <Border BorderBrush="#FF7AEFEE" Margin="30,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="../Images/inquery.png"></Image>
+                <Label Content="信息查询" Style="{StaticResource TopMenuStyle}"></Label>
+            </StackPanel>
+        </Border>
+    </ControlTemplate>
+</ResourceDictionary>
