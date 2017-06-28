@@ -8,7 +8,6 @@
         <Setter Property="Width" Value="100"></Setter>
         <Setter Property="HorizontalContentAlignment" Value="Left"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-
     </Style>
     <Style TargetType="{x:Type Button}">
         <Setter Property="Cursor" Value="Hand"></Setter>
@@ -17,11 +16,13 @@
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         <Setter Property="HorizontalAlignment" Value="Right"></Setter>
     </Style>
-    <Style x:Key="TempStackPanel" TargetType="StackPanel">
+    <Style x:Key="TempBoder" TargetType="Border">
         <Setter Property="Height" Value="596"></Setter>
         <Setter Property="HorizontalAlignment" Value="Right"></Setter>
         <Setter Property="Width" Value="280"></Setter>
-        <!--<Setter Property="Background" Value="#FFF61616"></Setter>-->
+        <Setter Property="Background" Value="#FFDEE2E2"></Setter>
+        <Setter Property="BorderBrush" Value="#FF090909"></Setter>
+        <Setter Property="BorderThickness" Value="0.5"></Setter>
         <Setter Property="Visibility" Value="Hidden"></Setter>
     </Style>
     <Style x:Key="LayerlistBorder" TargetType="Border">
@@ -29,7 +30,6 @@
         <Setter Property="BorderBrush" Value="#FFA6A8A8"></Setter>
         <Setter Property="Width" Value="219"></Setter>
         <Setter Property="BorderThickness" Value="1,1,3,1"></Setter>
-        <Setter Property="Visibility" Value="Hidden"></Setter>
     </Style>
     <Style x:Key="Map" TargetType="Control">
         <Setter Property="HorizontalAlignment" Value="left"></Setter>

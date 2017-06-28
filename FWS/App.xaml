@@ -5,8 +5,10 @@
     <Application.Resources>
         <ResourceDictionary >
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="style/MyStyle.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="ControlTemplate/Template.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="style/MainWindowStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="style/CitySelectStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="ControlTemplate/MainWindowTemplate.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="ControlTemplate/CitySelectTemplate.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

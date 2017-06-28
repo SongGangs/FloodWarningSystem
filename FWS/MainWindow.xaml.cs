@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FWS.EarthquakeHelper;
 using FWS.temp;
+using FWS.utility;
 using FWS.WeatherHelper;
 
 namespace FWS
@@ -43,13 +44,25 @@ namespace FWS
             List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");
             weatherObj.DeleteWeatherMsg("南充");
             weatherObj.SaveWeatherMsg(list,"南充");*/
-
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.NowTime.Content = DateTime.Now.ToLongDateString()+"    " + DateTime.Now.ToLongTimeString();
+        }
+
+        private void WeatherMsgBtns_Click(object sender, RoutedEventArgs e)
+        {
+            bool isExist= WindowFormUtility.CheckFormIsExist("FWS.CitySelectWindow");
+            if (!isExist)
+            {
+                CitySelectWindow citySelectWindow=new CitySelectWindow();
+                citySelectWindow.Show();
+            }
+        }
+        private void CloseTempBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.TempPanel.Visibility = Visibility.Hidden;
         }
       
     }

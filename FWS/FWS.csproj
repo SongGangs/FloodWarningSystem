@@ -63,16 +63,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppCode\EnArea.cs" />
+    <Compile Include="AppCode\EnProvince.cs" />
+    <Compile Include="CitySelectWindow.xaml.cs">
+      <DependentUpon>CitySelectWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="temp\CatchHelper.cs" />
     <Compile Include="utility\AccessDataBase.cs" />
     <Compile Include="EarthquakeHelper\EarthquakeHandlerImpl.cs" />
     <Compile Include="EarthquakeHelper\EarthquakeMsg.cs" />
     <Compile Include="EarthquakeHelper\IEarthquakeHandler.cs" />
+    <Compile Include="utility\WindowFormUtility.cs" />
     <Compile Include="WeatherHelper\IWeatherHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherMsg.cs" />
     <Compile Include="WeatherHelper\WeatherDayMsg.cs" />
     <Compile Include="WeatherHelper\WeatherHandlerImpl.cs" />
     <Compile Include="WeatherHelper\WeatherHoursMsg.cs" />
+    <Page Include="CitySelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ControlTemplate\CitySelectTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -85,11 +99,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ControlTemplate\Template.xaml">
+    <Page Include="ControlTemplate\MainWindowTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="style\MyStyle.xaml">
+    <Page Include="style\CitySelectStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="style\MainWindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

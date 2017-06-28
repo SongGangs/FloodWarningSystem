@@ -5,12 +5,6 @@
     Title="山洪预警系统" Height="700" Width="1050" Foreground="#FF030202" Background="White" MaxWidth="1050" MaxHeight="700"
     WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="Window_Loaded">
     <Window.Resources>
-        <Style x:Key="TopMenuStyle" TargetType="{x:Type Label}">
-            <Setter Property="FontFamily" Value="Wide Latin" />
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="#FF149A8B" />
-        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -27,18 +21,30 @@
                     Orientation="Horizontal">
             <Button Name="EarlyWarningMsgBtn" Template="{StaticResource EarlyWarningMsgBtnTemplate}"
                     Click="MsgBtns_Click" />
-            <Button Name="WeatherMsgBtn" Template="{StaticResource WeatherMsgBtnTemplate}" Click="MsgBtns_Click" />
+            <Button Name="WeatherMsgBtn" Template="{StaticResource WeatherMsgBtnTemplate}" Click="WeatherMsgBtns_Click" />
             <Button Name="EarthquakeMsgBtn" Template="{StaticResource EarthquakeMsgBtnTemplate}" Click="MsgBtns_Click" />
             <Button Name="InqueryMsgBtn" Template="{StaticResource InqueryMsgBtnTemplate}" />
         </StackPanel>
-        <ToolBar Grid.Row="1" VerticalAlignment="Top" Height="29" Grid.ColumnSpan="2" />
+        <ToolBar Grid.Row="1" VerticalAlignment="Top" Height="29" Grid.ColumnSpan="2" >
+        </ToolBar>
         <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" />
         </Border>
-        <esri:MapView Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" />
+        <esri:MapView Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" >
+            <esri:Map InitialViewpoint="-14675766.357,2695407.734,-6733121.861,6583994.101,102100">
+                <esri:ArcGISDynamicMapServiceLayer ID="USA"
+                    ServiceUri="http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer" />
+            </esri:Map>
+        </esri:MapView>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Background="#FFB3AEAE">
             <Label Name="NowTime" Style="{StaticResource DateTimeLable}" Content="2017/6/27 星期一" />
         </StackPanel>
-        <StackPanel Name="TempPanel" Style="{StaticResource TempStackPanel}" Grid.Column="1" Grid.Row="2"></StackPanel>
+        <Border  Grid.Column="1" Grid.Row="2" Name="TempPanel" Style="{StaticResource TempBoder}">
+        <StackPanel >
+            <StackPanel Margin="0,5,0,0" >
+                    <Button Name="CloseTempBtn" Template="{StaticResource CloseTempBtnTemplate}" Click="CloseTempBtn_Click"></Button>
+            </StackPanel>
+        </StackPanel>
+        </Border>
     </Grid>
 </Window>

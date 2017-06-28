@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ControlTemplate x:Key="CitySelectBtn" TargetType="Button">
+        <Border CornerRadius="5" Width="50" Background="#FFECEEA5" Height="25" HorizontalAlignment="Right" Margin="0,0,20,0"  >
+            <Label Style="{StaticResource CitySelectBtnStyle}">确定</Label>
+        </Border>
+    </ControlTemplate>
+</ResourceDictionary>

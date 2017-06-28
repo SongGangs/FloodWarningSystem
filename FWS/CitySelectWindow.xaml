@@ -1,0 +1,27 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="FWS.CitySelectWindow"
+    xmlns:c="clr-namespace:FWS.AppCode"
+    Title="城市选择" Height="130" Width="250" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
+    Loaded="Window_Loaded">
+    <Window.Resources>
+        <c:EnArea x:Key="Area"></c:EnArea>
+        <c:EnProvince x:Key="Province"></c:EnProvince>
+    </Window.Resources>
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource CitySelectLableStyle}" Content="省份" />
+                <ComboBox x:Name="ProvinceComboBox" Style="{StaticResource CitySelectComboboxStyle}" SelectedValuePath="ProvinceCode" DisplayMemberPath="ProvinceName" SelectionChanged="ProvinceComboBox_SelectionChanged">
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource CitySelectLableStyle}" Content="城市" />
+                <ComboBox x:Name="AreaComboBox" Style="{StaticResource CitySelectComboboxStyle}" SelectedValuePath="AreaCode" DisplayMemberPath="AreaName">
+                </ComboBox>
+            </StackPanel>
+            <Button Template="{StaticResource  CitySelectBtn}" Click="Button_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
