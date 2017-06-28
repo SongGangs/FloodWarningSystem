@@ -33,6 +33,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Esri.ArcGISRuntime, Version=10.2.7.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL" />
     <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
@@ -73,7 +77,11 @@
     <Compile Include="EarthquakeHelper\EarthquakeHandlerImpl.cs" />
     <Compile Include="EarthquakeHelper\EarthquakeMsg.cs" />
     <Compile Include="EarthquakeHelper\IEarthquakeHandler.cs" />
+    <Compile Include="utility\ControlHelper.cs" />
     <Compile Include="utility\WindowFormUtility.cs" />
+    <Compile Include="View\DayAndNightWeatherInfo.cs" />
+    <Compile Include="View\OnlyDayWeatherInfo.cs" />
+    <Compile Include="View\WeatherItem.cs" />
     <Compile Include="WeatherHelper\IWeatherHandler.cs" />
     <Compile Include="WeatherHelper\IWeatherMsg.cs" />
     <Compile Include="WeatherHelper\WeatherDayMsg.cs" />
@@ -142,6 +150,25 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="HtmlAgilityPack.dll" />
+    <Resource Include="Images\weatherBack.jpg" />
+    <Resource Include="warning.ico" />
+    <Resource Include="Images\day\日间中雨.png" />
+    <Resource Include="Images\day\日间多云.png" />
+    <Resource Include="Images\day\日间大雨.png" />
+    <Resource Include="Images\day\日间小雨.png" />
+    <Resource Include="Images\day\日间晴.png" />
+    <Resource Include="Images\day\日间阴.png" />
+    <Resource Include="Images\day\日间阵雨.png" />
+    <Resource Include="Images\day\日间雷阵雨.png" />
+    <Resource Include="Images\night\晚间大雨.png" />
+    <Resource Include="Images\night\晚间晴.png" />
+    <Resource Include="Images\night\晚间中雨.png" />
+    <Resource Include="Images\night\晚间多云.png" />
+    <Resource Include="Images\night\晚间小雨.png" />
+    <Resource Include="Images\night\晚间阴.png" />
+    <Resource Include="Images\night\晚间阵雨.png" />
+    <Resource Include="Images\night\晚间雷阵雨.png" />
+    <Resource Include="Images\warning.png" />
     <Resource Include="Images\inquery.png" />
     <Resource Include="Images\allbgs.png" />
     <Resource Include="Images\earlywarning.png" />

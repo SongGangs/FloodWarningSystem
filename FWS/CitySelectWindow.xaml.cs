@@ -23,14 +23,17 @@ namespace FWS
     /// </summary>
     public partial class CitySelectWindow : Window
     {
-        private static  AccessDataBase db=new AccessDataBase();
-        public CitySelectWindow()
+        private static AccessDataBase db = new AccessDataBase();
+        private Border m_Weatherborder = null;
+
+        public CitySelectWindow(Border border)
         {
             InitializeComponent();
+            this.m_Weatherborder = border;
         }
 
         private static List<EnArea> m_arealist = null;
-        
+
         /// <summary>
         /// 根据省份ID通过异步方法获取所有地区信息
         /// </summary>
@@ -38,10 +41,10 @@ namespace FWS
         /// <returns></returns>
         private static async Task<List<EnArea>> QueryAreaFromDBAsync(int ID)
         {
-            List<EnArea>areas=new List<EnArea>();
+            List<EnArea> areas = new List<EnArea>();
             EnArea area;
             string sql = "select * from Area where ProvinceID=" + ID + " order by AreaName";
-            DataSet ds=db.ReturnDataSet(sql);
+            DataSet ds = db.ReturnDataSet(sql);
             DataTable dt = ds.Tables[0];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -88,7 +91,7 @@ namespace FWS
         {
             EnProvince province = this.ProvinceComboBox.SelectedItem as EnProvince;
             this.AreaComboBox.ItemsSource = await QueryAreaFromDBAsync(province.ID);
-            this.AreaComboBox.SelectedIndex = 0;//选择省份后给他填充所有城市的第一个
+            this.AreaComboBox.SelectedIndex = 0; //选择省份后给他填充所有城市的第一个
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -98,7 +101,12 @@ namespace FWS
                 MessageBox.Show("请选择省份和城市");
                 return;
             }
-            MessageBox.Show(this.ProvinceComboBox.SelectedValue.ToString() +"/"+ this.AreaComboBox.SelectedValue.ToString()+".html");
+          //  MessageBox.Show(this.ProvinceComboBox.SelectedValue.ToString() + "/" + this.AreaComboBox.SelectedValue.ToString() + ".html");
+            m_Weatherborder.Visibility=Visibility.Visible;
+            EnArea area = this.AreaComboBox.SelectedItem as EnArea;
+            MainWindow mw=new MainWindow();
+            mw.ShowWeather(area.ID, area.AreaName);
+            this.Close();
         }
     }
 }

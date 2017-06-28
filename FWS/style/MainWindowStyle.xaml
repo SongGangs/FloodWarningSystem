@@ -37,4 +37,31 @@
         <Setter Property="Height" Value="596"></Setter>
         <Setter Property="Width" Value="821"></Setter>
     </Style>
+    <Style x:Key="WeatherCityLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="24"></Setter>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
+        <Setter Property="Foreground" Value="#FF14CEE1"></Setter>
+        <Setter Property="VerticalAlignment" Value="Top"></Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        <Setter Property="Width" Value="139"></Setter>
+    </Style>
+    <Style x:Key="WeatherDateLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="20"></Setter>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        <Setter Property="Width" Value="139"></Setter>
+    </Style>
+    <Style x:Key="WeatherOtherLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="16"></Setter>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        <Setter Property="Margin" Value="0,5,0,0"></Setter>
+        <Setter Property="Width" Value="139"></Setter>
+    </Style>
+    <Style x:Key="WeatherImgLabel" TargetType="Image">
+        <Setter Property="Stretch" Value="Fill"></Setter>
+        <Setter Property="Width" Value="62"></Setter>
+        <Setter Property="Height" Value="54"></Setter>
+    </Style>
+    
 </ResourceDictionary>
