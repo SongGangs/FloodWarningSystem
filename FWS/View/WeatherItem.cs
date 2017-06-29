@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FWS.View
 {
-   public class WeatherItem
+    public class WeatherItem
     {
+        public int areaID { get; set; }
         public string date { get; set; }
         public string imageSrc { get; set; }
         public string weatherStatus { get; set; }

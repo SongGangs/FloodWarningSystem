@@ -21,17 +21,18 @@ namespace FWS.WeatherHelper
         /// 反而要用一些奇葩的语句！
         /// </summary>
 
-        private string url = "http://www.nmc.cn/publish/forecast/";
-        private AccessDataBase db=new AccessDataBase();
-        public List<IWeatherMsg> GetWeatherByName(string name)
+        private static string url = "http://www.nmc.cn/publish/forecast/";
+        private static AccessDataBase db = new AccessDataBase();
+        public List<IWeatherMsg> GetWeatherByUrl(string urlcode)
         {
+            /*
             string code = db.GetCodeByName(name);
             if (code==null)
             {
                 MessageBox.Show("当前地区无天气数据");
                 return null;
-            }
-            url = url + code+".html";
+            }*/
+            url = url + urlcode ;
             List<IWeatherMsg> List = new List<IWeatherMsg>();
             WeatherDayMsg dayMsg;
             HtmlWeb web = new HtmlWeb();
@@ -110,6 +111,7 @@ namespace FWS.WeatherHelper
                 for (int j = 1; j < 9; j++)
                 {
                     hoursMsg = new WeatherHoursMsg();
+                    hoursMsg.day = DateTime.Parse(div[1].ChildNodes[3].InnerText.Trim()).AddDays(k).Date;
                     if (div[1].ChildNodes[1 + j * 2].InnerText.Trim().Contains("日"))
                     {
                         hoursMsg.time = DateTime.Parse(div[1].ChildNodes[1 + j * 2].InnerText.Trim());
@@ -139,8 +141,8 @@ namespace FWS.WeatherHelper
         }
 
 
-      
-        public void SaveWeatherMsg(List<IWeatherMsg> msglist,string name)
+
+        public async Task SaveWeatherMsg(List<IWeatherMsg> msglist, string name)
         {
             List<string> sqllist = new List<string>();
            int id= db.GetAreaIDByName(name);
@@ -157,8 +159,8 @@ namespace FWS.WeatherHelper
                     WeatherHoursMsg hoursMsg=msglist[i] as WeatherHoursMsg;
                     sql =
                         String.Format(
-                            "INSERT INTO HoursRainInfo ([time],[temperature],[rains],[wind],[windL],[humidity],[AreaID]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                            hoursMsg.time, hoursMsg.temperature, hoursMsg.rains, hoursMsg.wind, hoursMsg.windL,
+                            "INSERT INTO HoursRainInfo ([day],[time],[temperature],[rains],[wind],[windL],[humidity],[AreaID]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
+                            hoursMsg.day, hoursMsg.time, hoursMsg.temperature, hoursMsg.rains, hoursMsg.wind, hoursMsg.windL,
                             hoursMsg.humidity, id);
                 }
                 else
@@ -175,7 +177,7 @@ namespace FWS.WeatherHelper
             db.insertToAccessByBatch(sqllist);
         }
 
-        public void DeleteWeatherMsg(string name)
+        public async Task DeleteWeatherMsg(string name)
         {
             int id = db.GetAreaIDByName(name);
             string sql = "DELETE  FROM HoursRainInfo WHERE AreaID = " + id ;

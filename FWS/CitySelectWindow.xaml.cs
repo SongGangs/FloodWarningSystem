@@ -24,12 +24,12 @@ namespace FWS
     public partial class CitySelectWindow : Window
     {
         private static AccessDataBase db = new AccessDataBase();
-        private Border m_Weatherborder = null;
+        private MainWindow m_MainWindow = null;
 
-        public CitySelectWindow(Border border)
+        public CitySelectWindow(MainWindow mainWindow)
         {
             InitializeComponent();
-            this.m_Weatherborder = border;
+            this.m_MainWindow = mainWindow;
         }
 
         private static List<EnArea> m_arealist = null;
@@ -101,11 +101,11 @@ namespace FWS
                 MessageBox.Show("请选择省份和城市");
                 return;
             }
-          //  MessageBox.Show(this.ProvinceComboBox.SelectedValue.ToString() + "/" + this.AreaComboBox.SelectedValue.ToString() + ".html");
-            m_Weatherborder.Visibility=Visibility.Visible;
+            string urlcode = this.ProvinceComboBox.SelectedValue.ToString() + "/" +
+                             this.AreaComboBox.SelectedValue.ToString() + ".html";
+            m_MainWindow.WeatherTempPanel.Visibility=Visibility.Visible;
             EnArea area = this.AreaComboBox.SelectedItem as EnArea;
-            MainWindow mw=new MainWindow();
-            mw.ShowWeather(area.ID, area.AreaName);
+            m_MainWindow.ShowWeather(area.ID, area.AreaName, urlcode);
             this.Close();
         }
     }

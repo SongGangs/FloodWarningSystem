@@ -13,6 +13,10 @@ namespace FWS.WeatherHelper
     public class WeatherHoursMsg : IWeatherMsg
     {
         /// <summary>
+        /// 属于那一天的小时记录
+        /// </summary>
+        public DateTime day { get; set; }
+        /// <summary>
         /// 小时时间
         /// </summary>
         public DateTime time { get; set; }
