@@ -59,7 +59,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="569*"/>
-                    <RowDefinition Height="27*"/>
+                    <RowDefinition Height="35*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,5,0.2,0" VerticalAlignment="Top" Panel.ZIndex="1" >
                     <Button Name="CloseTempBtn" Template="{StaticResource CloseTempBtnTemplate}"
@@ -107,7 +107,7 @@
                         <ListView Name="ListView" ItemTemplate="{StaticResource ResourceKey=WeatherList}" Background="#00000000"></ListView>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0.2,4" >
+                <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0.2,8" >
                     <Button Name="TagBtn_forecast"  Template="{StaticResource TagBtnTemplate}"  Content="天气预报" Tag="forecast" Click="TagBtn_Click" />
                     <Button  Name="TagBtn_detail" Template="{StaticResource TagBtn2Template}"  Content="天气详情" Tag="detail" Click="TagBtn_Click"/>
                 </StackPanel>
