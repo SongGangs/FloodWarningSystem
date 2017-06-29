@@ -114,7 +114,9 @@ namespace FWS.WeatherHelper
                     hoursMsg.day = DateTime.Parse(div[1].ChildNodes[3].InnerText.Trim()).AddDays(k).Date;
                     if (div[1].ChildNodes[1 + j * 2].InnerText.Trim().Contains("日"))
                     {
-                        hoursMsg.time = DateTime.Parse(div[1].ChildNodes[1 + j * 2].InnerText.Trim());
+                        hoursMsg.time =
+                            hoursMsg.day.AddDays(1)
+                                .AddHours(DateTime.Parse(div[1].ChildNodes[1 + j*2].InnerText.Trim()).Hour);
                         flag = j;
                     }
                     else

@@ -20,6 +20,7 @@ using FWS.temp;
 using FWS.utility;
 using FWS.View;
 using FWS.WeatherHelper;
+using Visifire.Charts;
 
 namespace FWS
 {
@@ -65,7 +66,7 @@ namespace FWS
         }
         private void InqueryMsgBtns_Click(object sender, RoutedEventArgs e)
         {
-            ShowWeather(6418, "南充");
+            //ShowWeather(6418, "南充");
         }
         private void CloseTempBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -118,7 +119,7 @@ namespace FWS
         /// </summary>
         /// <param name="name"></param>
         /// <param name="list"></param>
-        private async void CatchWeatherMsgAsync(string name,List<IWeatherMsg> list)
+        private async Task SaveWeatherMsgAsync(string name,List<IWeatherMsg> list)
         {
             IWeatherHandler weatherHandler = new WeatherHandlerImpl();
             await weatherHandler.DeleteWeatherMsg(name);
@@ -131,10 +132,11 @@ namespace FWS
         /// <param name="id">城市ID</param>
         /// <param name="name">城市名字</param>
         /// <returns></returns>
-        private Dictionary<string, object> GetWeatherByCity(int id, string name, string urlcode)
+        private Dictionary<string, object> GetWeatherByCity(int id, string name, string urlcode,ref List<IWeatherMsg> weatherMsgs)
         {
             IWeatherHandler weatherHandler = new WeatherHandlerImpl();
             List<IWeatherMsg> list=weatherHandler.GetWeatherByUrl(urlcode);
+            weatherMsgs = list;
             Dictionary<string,object> dic=new Dictionary<string, object>();
             List<WeatherItem> weatherLists=new List<WeatherItem>();
             WeatherItem weatherItem = new WeatherItem();
@@ -192,60 +194,75 @@ namespace FWS
             dic.Add("weatherItem", weatherLists);
              */
             #endregion
+
             if (list.Count == 0)
             {
                 MessageBox.Show("暂无天气数据");
                 return null;
             }
-            if (string.IsNullOrEmpty(dt.Rows[0]["maxTemp"].ToString()))
+            for (int i = 0; i < list.Count; i++)
             {
-                OnlyDayWeatherInfo od = new OnlyDayWeatherInfo();
-                od.city = name;
-                od.date = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("MM月dd日");
-                od.week = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("dddd");
-                od.imgSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                od.temperature = dt.Rows[0]["minTemp"].ToString();
-                od.wind = dt.Rows[0]["wind"].ToString().Trim();
-                od.windL = dt.Rows[0]["windL"].ToString().Trim();
-                dic.Add("onlyday", od);
-            }
-            else
-            {
-                DayAndNightWeatherInfo dn = new DayAndNightWeatherInfo();
-                dn.city = name;
-                dn.date = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("MM月dd日");
-                dn.week = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("dddd");
-                dn.imgSrc_day = "Images/day/日间" + GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                dn.imgSrc_night = "Images/night/夜间" + GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                dn.maxTemperature = dt.Rows[0]["maxTemp"].ToString();
-                dn.minTemperature = dt.Rows[0]["minTemp"].ToString();
-                dn.wind_day = dt.Rows[0]["wind"].ToString().Split('转')[0].Trim();
-                dn.wind_night = dt.Rows[0]["wind"].ToString().Split('转')[1].Trim();
-                dn.windL_day = dt.Rows[0]["windL"].ToString().Split('转')[0].Trim();
-                dn.windL_night = dt.Rows[0]["windL"].ToString().Split('转')[1].Trim();
-                dic.Add("dayandnight", dn);
-            }
-            for (int i = 1; i < dt.Rows.Count; i++)
-            {
-                weatherItem = new WeatherItem();
-                weatherItem.areaID = id;
-                weatherItem.date = DateTime.Parse(dt.Rows[i]["time"].ToString()).ToString("MM月dd日");
-                weatherItem.maxTemperature = dt.Rows[i]["maxTemp"].ToString();
-                weatherItem.minTemperature = dt.Rows[i]["minTemp"].ToString();
-                string weatherStatus = dt.Rows[i]["weatherStatus"].ToString().Split('转')[0].Trim();
-                weatherItem.weatherStatus = weatherStatus;
-                weatherItem.imageSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(weatherStatus);
-                weatherLists.Add(weatherItem);
+                if (list[i].flag == 2)//每天的数据
+                {
+                    WeatherDayMsg dayMsg = list[i] as WeatherDayMsg;
+                    if (dayMsg.time==DateTime.Today)//今天的数据
+                    {
+                        if (string.IsNullOrEmpty(dayMsg.maxTemp))//如果只有半天数据
+                        {
+                            OnlyDayWeatherInfo od = new OnlyDayWeatherInfo();
+                            od.city = name;
+                            od.date = dayMsg.time.ToString("MM月dd日");
+                            od.week = dayMsg.time.ToString("dddd");
+                            od.weatherStatus = dayMsg.weatherStatus;
+                            od.imgSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(dayMsg.weatherStatus);
+                            od.temperature = dayMsg.minTemp;
+                            od.wind = dayMsg.wind;
+                            od.windL = dayMsg.windL;
+                            dic.Add("onlyday", od);
+                        }
+                        else
+                        {
+                            DayAndNightWeatherInfo dn = new DayAndNightWeatherInfo();
+                            dn.city = name;
+                            dn.date = dayMsg.time.ToString("MM月dd日");
+                            dn.week = dayMsg.time.ToString("dddd");
+                            dn.weatherStatus_day = dayMsg.weatherStatus.Split('转')[0].Trim();
+                            dn.weatherStatus_night = dayMsg.weatherStatus.Split('转')[1].Trim();
+                            dn.imgSrc_day = "Images/day/日间" + GetWeatherImgSrcByWeatherStatus(dn.weatherStatus_day);
+                            dn.imgSrc_night = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(dn.weatherStatus_night);
+                            dn.maxTemperature = dayMsg.maxTemp;
+                            dn.minTemperature = dayMsg.minTemp;
+                            dn.wind_day = dayMsg.wind.Split('转')[0].Trim();
+                            dn.wind_night = dayMsg.wind.Split('转')[1].Trim();
+                            dn.windL_day = dayMsg.windL.Split('转')[0].Trim();
+                            dn.windL_night = dayMsg.windL.Split('转')[1].Trim();
+                            dic.Add("dayandnight", dn);
+                        }
+                    }
+                    else//之后7几天的数据
+                    {
+                        weatherItem = new WeatherItem();
+                        weatherItem.areaID = id;
+                        weatherItem.date = dayMsg.time.ToString("MM月dd日");
+                        weatherItem.maxTemperature = dayMsg.maxTemp;
+                        weatherItem.minTemperature = dayMsg.minTemp;
+                        string weatherStatus = dayMsg.weatherStatus.Split('转')[0].Trim();
+                        weatherItem.weatherStatus = weatherStatus;
+                        weatherItem.imageSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(weatherStatus);
+                        weatherLists.Add(weatherItem);
+                    }
+                }
             }
             dic.Add("weatherItem", weatherLists);
             return dic;
         }
 
-        public void ShowWeather(int id,string name,string urlcode)
+        public async Task ShowWeather(int id,string name,string urlcode)
         {
             try
             {
-                Dictionary<string, object> dic = GetWeatherByCity(id, name, urlcode);
+                List<IWeatherMsg> weatherMsgs = null;
+                Dictionary<string, object> dic = GetWeatherByCity(id, name, urlcode,ref weatherMsgs);
                 this.ListView.ItemsSource = dic["weatherItem"] as List<WeatherItem>;
                 if (dic.ContainsKey("onlyday"))
                 {
@@ -268,13 +285,38 @@ namespace FWS
                     this.dayandnightPanel_detail.Visibility = Visibility.Visible;
                     this.onlynightPanel_detail.Visibility = Visibility.Collapsed;
                     this.WeatherDetailPanel.DataContext = dic["dayandnight"] as DayAndNightWeatherInfo;
-
                 }
+                //await SaveWeatherMsgAsync(name, weatherMsgs);
+
+                //图表渲染
+                await RendererCharts(id, DateTime.Parse(this.NowTime.Content.ToString()).ToString("MM月dd日"));
             }
             catch (Exception)
             {
             }
             
+        }
+
+        /// <summary>
+        /// 渲染图表
+        /// </summary>
+        /// <param name="areaID"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        private async Task RendererCharts(int areaID,string date)
+        {
+            string sql = String.Format("select * from HoursRainInfo where AreaID={0} and day=#{1}#", areaID, DateTime.Parse(date));
+            DataTable dt = db.ReturnDataSet(sql).Tables[0];
+            string Charttitle = date + "天气详情";
+            List<DateTime> LsTime = new List<DateTime>();
+            List<string> temperatures = new List<string>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                LsTime.Add(DateTime.Parse(dt.Rows[i]["time"].ToString()));
+                temperatures.Add(dt.Rows[i]["temperature"].ToString().Replace("℃", String.Empty));
+            }
+            Simon.Children.Clear();
+            CreateChartSpline(Charttitle, LsTime, temperatures);
         }
         /// <summary>
         /// 根据天气状况名字返回对应的图片地址
@@ -330,9 +372,99 @@ namespace FWS
                 MessageBox.Show("点击的天气暂无信息。");
                 return; 
             }
-            DateTime date=DateTime.Parse(weatherItem.date);
-            string sql = String.Format("select * from HoursRainInfo where AreaID={0} and day=#{1}#",weatherItem.areaID,DateTime.Parse(weatherItem.date)) ;
-            DataTable dt = db.ReturnDataSet(sql).Tables[0];
+            RendererCharts(weatherItem.areaID, weatherItem.date);
+            TagBtn_Click(this.TagBtn_detail, null);
         }
+        #region 折线图
+        public void CreateChartSpline(string Charttitle, List<DateTime> lsTime, List<string> temperatures)
+        {
+            //创建一个图标
+            Chart chart = new Chart();
+
+            //设置图标的宽度和高度
+            chart.Width = 285;
+            chart.Height = 300;
+            //是否启用打印和保持图片
+            chart.ToolBarEnabled = true;
+
+            //设置图标的属性
+            chart.ScrollingEnabled = false;//是否启用或禁用滚动
+            chart.View3D = true;//3D效果显示
+
+            //创建一个标题的对象
+            Title title = new Title();
+
+            //设置标题的名称
+            title.Text = Charttitle;
+            title.Padding = new Thickness(0, 10, 5, 0);
+
+            //向图标添加标题
+            chart.Titles.Add(title);
+
+            //初始化一个新的Axis
+            Axis xaxis = new Axis();
+            //设置Axis的属性
+            //图表的X轴坐标按什么来分类，如时分秒
+            xaxis.IntervalType = IntervalTypes.Hours;
+            //图表的X轴坐标间隔如2,3,20等，单位为xAxis.IntervalType设置的时分秒。
+            xaxis.Interval = 3;
+            //设置X轴的时间显示格式为7-10 11：20           
+            xaxis.ValueFormatString = "HH时";
+            //给图标添加Axis            
+            chart.AxesX.Add(xaxis);
+
+            Axis yAxis = new Axis();
+            //设置图标中Y轴的最小值永远为0           
+            yAxis.AxisMinimum = 0;
+            //设置图表中Y轴的后缀          
+            yAxis.Suffix = "℃";
+            chart.AxesY.Add(yAxis);
+
+            // 创建一个新的数据线。               
+            DataSeries dataSeries = new DataSeries();
+            // 设置数据线的格式。               
+            dataSeries.LegendText = "温度";
+
+            dataSeries.RenderAs = RenderAs.Spline;//折线图
+
+            dataSeries.XValueType = ChartValueTypes.DateTime;
+            // 设置数据点              
+            DataPoint dataPoint;
+            for (int i = 0; i < lsTime.Count; i++)
+            {
+                // 创建一个数据点的实例。                   
+                dataPoint = new DataPoint();
+                // 设置X轴点                    
+                dataPoint.XValue = lsTime[i];
+                //设置Y轴点                   
+                dataPoint.YValue = double.Parse(temperatures[i]);
+                dataPoint.MarkerSize = 8;
+                //dataPoint.Tag = tableName.Split('(')[0];
+                //设置数据点颜色                  
+                // dataPoint.Color = new SolidColorBrush(Colors.LightGray);                   
+                dataPoint.MouseLeftButtonDown += new MouseButtonEventHandler(dataPoint_MouseLeftButtonDown);
+                //添加数据点                   
+                dataSeries.DataPoints.Add(dataPoint);
+            }
+
+            // 添加数据线到数据序列。                
+            chart.Series.Add(dataSeries);
+            
+            //将生产的图表增加到Grid，然后通过Grid添加到上层Grid.           
+            Grid gr = new Grid();
+            gr.Children.Add(chart);
+
+            Simon.Children.Add(gr);
+        }
+        #endregion
+
+        #region 点击事件
+        //点击事件
+        void dataPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //DataPoint dp = sender as DataPoint;
+            //MessageBox.Show(dp.YValue.ToString());
+        }
+        #endregion
     }
 }

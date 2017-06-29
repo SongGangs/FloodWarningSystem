@@ -2,16 +2,17 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" x:Class="FWS.MainWindow"
+    xmlns:local="clr-namespace:FWS"
     Title="山洪预警系统" Height="700" Width="1050" Foreground="#FF030202" Background="White" MaxWidth="1050" MaxHeight="700"
     WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="Window_Loaded" Icon="Images/warning.png">
     <Window.Resources>
         <DataTemplate x:Key="WeatherList">
-            <Border Name="border" BorderBrush="#FFC1C4C4" BorderThickness="1"  Margin="5">
+            <Border Name="border" BorderBrush="#FFC1C4C4" BorderThickness="1"  Margin="3">
                 <StackPanel >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                         <Label VerticalContentAlignment="Center" Content="{Binding date}" />
                         <Image Width="35" Height="35" Stretch="Fill" Source="{Binding imageSrc}" Margin="10,0" />
-                        <Label VerticalContentAlignment="Center" Content="{Binding weatherStatus}" />
+                        <Label VerticalContentAlignment="Center" Content="{Binding weatherStatus}" HorizontalContentAlignment="Center" Width="50" />
                         <Label VerticalContentAlignment="Center" Content="{Binding maxTemperature}" BorderThickness="10,0" />
                         <Label VerticalContentAlignment="Center" Content="{Binding minTemperature}" />
                     </StackPanel>
@@ -52,7 +53,7 @@
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Background="#FFB3AEAE">
             <Label Name="NowTime" Style="{StaticResource DateTimeLable}" Content="2017/6/27 星期一" />
         </StackPanel>
-        <Border Grid.Column="1" Grid.Row="2" Name="WeatherTempPanel" Style="{StaticResource TempBoder}" Visibility="Visible">
+        <Border Grid.Column="1" Grid.Row="2" Name="WeatherTempPanel" Style="{StaticResource TempBoder}" Visibility="Collapsed">
             <Border.Background>
                 <ImageBrush  Stretch="Fill" ImageSource="Images/weatherBack.jpg" />
             </Border.Background>
@@ -70,7 +71,7 @@
                 <StackPanel Grid.Row="0" Name="WeatherForecastPanel">
                     <Label  Content="{Binding city}" Style="{StaticResource WeatherCityLabel}" Foreground="#FF151E5C"></Label>
                     <StackPanel Orientation="Horizontal" >
-                        <Label Content="{Binding date}"  Style="{StaticResource WeatherDateLabel }"></Label>
+                        <Label  Content="{Binding date}"  Style="{StaticResource WeatherDateLabel }"></Label>
                         <Label Content="{Binding week}" Style="{StaticResource WeatherDateLabel}"></Label>
                     </StackPanel>
                     <StackPanel Name="dayandnightPanel"  Visibility="Collapsed" >
@@ -144,7 +145,8 @@
                         <Label Style="{StaticResource WeatherOtherLabel}" Content="{Binding windL}"></Label>
                     </StackPanel>
                     <StackPanel>
-                        <!--<ListView Name="ListView" ItemTemplate="{StaticResource ResourceKey=WeatherList}" Background="#00000000"></ListView>-->
+                        <Grid Name="Simon" Width="290">
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0.2,8" >

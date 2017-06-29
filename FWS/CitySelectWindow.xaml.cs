@@ -94,7 +94,7 @@ namespace FWS
             this.AreaComboBox.SelectedIndex = 0; //选择省份后给他填充所有城市的第一个
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (this.ProvinceComboBox.SelectedIndex < 0)
             {
@@ -105,7 +105,7 @@ namespace FWS
                              this.AreaComboBox.SelectedValue.ToString() + ".html";
             m_MainWindow.WeatherTempPanel.Visibility=Visibility.Visible;
             EnArea area = this.AreaComboBox.SelectedItem as EnArea;
-            m_MainWindow.ShowWeather(area.ID, area.AreaName, urlcode);
+            await m_MainWindow.ShowWeather(area.ID, area.AreaName, urlcode);
             this.Close();
         }
     }
