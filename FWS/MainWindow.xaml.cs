@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -8,18 +10,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
+using AllDemo;
+using Esri.ArcGISRuntime.Controls;
+using Esri.ArcGISRuntime.Data;
+using Esri.ArcGISRuntime.Geometry;
+using Esri.ArcGISRuntime.Layers;
+using Esri.ArcGISRuntime.LocalServices;
+using Esri.ArcGISRuntime.Symbology;
 using FWS.EarthquakeHelper;
+using FWS.MapHelper;
 using FWS.temp;
+using FWS.TreeView;
 using FWS.utility;
 using FWS.View;
 using FWS.WeatherHelper;
+using Microsoft.Win32;
 using Visifire.Charts;
 
 namespace FWS
@@ -27,17 +35,22 @@ namespace FWS
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private AccessDataBase db = new AccessDataBase();
+        private static AccessDataBase db = new AccessDataBase();//数据库操作帮助类
+        private static Dictionary<string, object> weatherDictionary;//获取天气展示类别的信息  字典
+
         public MainWindow()
         {
             InitializeComponent();
+            CrackHelper.Crack();
+            DataContext = this;      
+
         }
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
-            this.EarthquakeTempPanel.Visibility = Visibility.Visible;
+          
             /* 
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
            List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
@@ -50,10 +63,53 @@ namespace FWS
             weatherObj.SaveWeatherMsg(list,"南充");*/
         }
 
+        /// <summary>
+        /// 地震信息点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void EarthquakeMsgBtns_Click(object sender, RoutedEventArgs e)
+        {
+            IEarthquakeHandler earthquake=new EarthquakeHandlerImpl();
+           await earthquake.GetEarthquakrMsgs();
+            this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
+           this.EarthquakeTempPanel.Visibility = Visibility.Visible;
+
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.NowTime.Content = DateTime.Now.ToLongDateString()+"    " + DateTime.Now.ToLongTimeString();
+            //时间定时器 实时更新
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Interval = TimeSpan.FromSeconds(1); //设置刷新的间隔时间
+            timer.Start();
+
+            //
+            IList<TreeModel> list=new List<TreeModel>();
+            TreeModel tree1=new TreeModel();
+            tree1.Id = "1";
+            tree1.Name = "第一级";
+            list.Add(tree1);
+            list.Add(tree1);
+            list.Add(tree1);
+            list.Add(tree1);
+            TreeModel tree2=new TreeModel();
+            tree2.Id = "1";
+            tree2.Name = "第一级";
+            tree2.Children = list;
+            IList<TreeModel> list2 = new List<TreeModel>();
+            list2.Add(tree2);
+            list2.Add(tree2);
+            list2.Add(tree2);
+            MyTreeView.ItemsSourceData = list2;
         }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            this.NowTime.Content = DateTime.Now.ToLongDateString() + "    " + DateTime.Now.ToLongTimeString();
+        }
+
 
         private void WeatherMsgBtns_Click(object sender, RoutedEventArgs e)
         {
@@ -74,10 +130,10 @@ namespace FWS
             switch (button.Tag.ToString())
             {
                 case "Weather":
-                    this.WeatherTempPanel.Visibility = Visibility.Hidden;
+                    this.WeatherTempPanel.Visibility = Visibility.Collapsed;
                     break;
                 case "Earthquake":
-                    this.EarthquakeTempPanel.Visibility = Visibility.Hidden;
+                    this.EarthquakeTempPanel.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -119,11 +175,11 @@ namespace FWS
         /// </summary>
         /// <param name="name"></param>
         /// <param name="list"></param>
-        private async Task SaveWeatherMsgAsync(string name,List<IWeatherMsg> list)
+        private async Task SaveWeatherMsgAsync(string name)
         {
             IWeatherHandler weatherHandler = new WeatherHandlerImpl();
             await weatherHandler.DeleteWeatherMsg(name);
-            await weatherHandler.SaveWeatherMsg(list, name);
+            await weatherHandler.SaveWeatherMsg(weatherHandler.WeatherMsgs, name);
         }
 
         /// <summary>
@@ -132,11 +188,12 @@ namespace FWS
         /// <param name="id">城市ID</param>
         /// <param name="name">城市名字</param>
         /// <returns></returns>
-        private Dictionary<string, object> GetWeatherByCity(int id, string name, string urlcode,ref List<IWeatherMsg> weatherMsgs)
+        private  async Task GetWeatherByCity(int id, string name, string urlcode)
         {
+            weatherDictionary=null;//先初始化为空。
             IWeatherHandler weatherHandler = new WeatherHandlerImpl();
-            List<IWeatherMsg> list=weatherHandler.GetWeatherByUrl(urlcode);
-            weatherMsgs = list;
+            await weatherHandler.GetWeatherByUrl(urlcode);
+            List<IWeatherMsg> list = weatherHandler.WeatherMsgs;
             Dictionary<string,object> dic=new Dictionary<string, object>();
             List<WeatherItem> weatherLists=new List<WeatherItem>();
             WeatherItem weatherItem = new WeatherItem();
@@ -198,7 +255,7 @@ namespace FWS
             if (list.Count == 0)
             {
                 MessageBox.Show("暂无天气数据");
-                return null;
+                return ;
             }
             for (int i = 0; i < list.Count; i++)
             {
@@ -254,16 +311,16 @@ namespace FWS
                 }
             }
             dic.Add("weatherItem", weatherLists);
-            return dic;
+            weatherDictionary = dic;
         }
 
         public async Task ShowWeather(int id,string name,string urlcode)
         {
             try
             {
-                List<IWeatherMsg> weatherMsgs = null;
-                Dictionary<string, object> dic = GetWeatherByCity(id, name, urlcode,ref weatherMsgs);
-                this.ListView.ItemsSource = dic["weatherItem"] as List<WeatherItem>;
+                await GetWeatherByCity(id, name, urlcode);
+                Dictionary<string, object> dic = weatherDictionary;
+                this.WeatherForecastListView.ItemsSource = dic["weatherItem"] as List<WeatherItem>;
                 if (dic.ContainsKey("onlyday"))
                 {
                     //天气预报
@@ -286,7 +343,7 @@ namespace FWS
                     this.onlynightPanel_detail.Visibility = Visibility.Collapsed;
                     this.WeatherDetailPanel.DataContext = dic["dayandnight"] as DayAndNightWeatherInfo;
                 }
-                //await SaveWeatherMsgAsync(name, weatherMsgs);
+                //await SaveWeatherMsgAsync(name);
 
                 //图表渲染
                 await RendererCharts(id, DateTime.Parse(this.NowTime.Content.ToString()).ToString("MM月dd日"));
@@ -360,13 +417,13 @@ namespace FWS
         }
 
         /// <summary>
-        /// 天气预报中的 预报信息 点击事件
+        /// 天气预报中的 预报信息列表 点击事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void WeatherForecastListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WeatherItem weatherItem = this.ListView.SelectedItem as WeatherItem;
+            WeatherItem weatherItem = this.WeatherForecastListView.SelectedItem as WeatherItem;
             if (weatherItem==null)
             {
                 MessageBox.Show("点击的天气暂无信息。");
@@ -374,6 +431,20 @@ namespace FWS
             }
             RendererCharts(weatherItem.areaID, weatherItem.date);
             TagBtn_Click(this.TagBtn_detail, null);
+        }
+        /// <summary>
+        /// 地震信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EarthquakeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EarthquakeMsg msg=this.EarthquakeListView.SelectedItem as EarthquakeMsg;
+            if (msg == null)
+            {
+                MessageBox.Show("点击的地震信息暂无信息。");
+                return;
+            }
         }
         #region 折线图
         public void CreateChartSpline(string Charttitle, List<DateTime> lsTime, List<string> temperatures)
@@ -466,5 +537,163 @@ namespace FWS
             //MessageBox.Show(dp.YValue.ToString());
         }
         #endregion
+        #region 添加数据到地图
+
+        private async void AddLayerDataBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Shapefiles|*.shp|Image files|*.bmp;*.png;*.sid;*.tif|所有文件|*.*";
+                openFileDialog.RestoreDirectory = true;
+                openFileDialog.Multiselect = true;
+                openFileDialog.Title = "文件选取";
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    foreach (var item in openFileDialog.SafeFileNames)
+                    {
+                        if (item.Contains(".shp"))
+                        {
+                            await LoadShapefile(openFileDialog.FileName);
+                        }
+                        else if (item.Contains(".bmp") || item.Contains(".png") || item.Contains(".sid") ||
+                                 item.Contains(".tif"))
+                        {
+                            var dynLayer =
+                                await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Raster,
+                                    System.IO.Path.GetDirectoryName(openFileDialog.FileName),
+                                    new List<string>(openFileDialog.SafeFileNames));
+
+                            // Add the dynamic map service layer to the map
+                            if (dynLayer != null)
+                            {
+                                dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
+                                MyMapView.Map.Layers.Add(dynLayer);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Sample Error");
+            }
+        }
+
+        private async Task LoadShapefile(string path)
+        {
+            try
+            {
+                // open shapefile table
+                var shapefile = await ShapefileTable.OpenAsync(path);
+                // clear existing map and spatial reference
+                if (MyMapView.Map.Layers.Any())
+                {
+                   // MyMapView.Map.Layers.Clear();
+                    MyMapView.Map = new Map();
+                }
+                // create feature layer based on the shapefile
+                var flayer = new FeatureLayer(shapefile)
+                {
+                    ID = shapefile.Name,
+                    DisplayName = path,
+                };
+
+                // Add the feature layer to the map
+                MyMapView.Map.Layers.Add(flayer);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error creating feature layer: " + ex.Message, "Sample Error");
+            }
+        }
+        #endregion
+
+        #region 地图缩略图
+        public async void OverviewMap_LayerLoaded(object sender, LayerLoadedEventArgs e)
+        {
+            await AddSingleGraphicAsync();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name = null)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
+        private Envelope _Extent = null;
+        public Envelope Extent
+        {
+            get
+            {
+                return _Extent;
+            }
+            set
+            {
+                _Extent = value;
+                OnPropertyChanged("Extent");
+            }
+        }
+        public async void MyMapView_ExtentChanged(object sender, System.EventArgs e)
+        {
+            var graphicsOverlay = overviewMap.GraphicsOverlays["overviewOverlay"];
+
+            Graphic g = graphicsOverlay.Graphics.FirstOrDefault();
+            if (g == null) //first time
+            {
+                g = new Graphic();
+                graphicsOverlay.Graphics.Add(g);
+            }
+            var currentViewpoint = MyMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
+            var viewpointExtent = currentViewpoint.TargetGeometry.Extent;
+            g.Geometry = viewpointExtent;
+
+            await overviewMap.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 15);
+        }
+        private async Task AddSingleGraphicAsync()
+        {
+            try
+            {
+                await MyMapView.LayersLoadedAsync();
+
+                var graphicsOverlay = overviewMap.GraphicsOverlays["overviewOverlay"];
+                Symbol symbol = symbol = Resources["RedFillSymbol"] as Symbol;
+                while (true)
+                {
+                    var geometry = await overviewMap.Editor.RequestShapeAsync(DrawShape.Rectangle, symbol);
+                    graphicsOverlay.Graphics.Clear();
+
+                    var graphic = new Graphic(geometry, symbol);
+                    graphicsOverlay.Graphics.Add(graphic);
+
+                    var viewpointExtent = geometry.Extent;
+                    await MyMapView.SetViewAsync(viewpointExtent);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Ignore cancellations from selecting new shape type
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void MyMapView_ExtentChanged_1(object sender, EventArgs e)
+        {
+            var currentViewpoint = MyMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
+            var viewpointExtent = currentViewpoint.TargetGeometry.Extent;
+        }
+
+        private void overviewMap_LayerLoaded_1(object sender, LayerLoadedEventArgs e)
+        {
+
+        }
+        #endregion
+
+
+       
+
     }
 }

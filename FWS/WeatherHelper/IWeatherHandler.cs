@@ -10,12 +10,16 @@ namespace FWS.WeatherHelper
     interface IWeatherHandler
     {
         /// <summary>
+        /// 盛装 从网上抓取的天气信息
+        /// </summary>
+        List<IWeatherMsg> WeatherMsgs { get; }
+        /// <summary>
         /// 根据返回结果的flag标志 来判断是每天还是每个小时的数据 
         /// 在实例化对应的类
         /// </summary>
         /// <param name="url">城市名字</param>
         /// <returns></returns>
-        List<IWeatherMsg> GetWeatherByUrl(string urlcode);
+        Task GetWeatherByUrl(string urlcode);
         /// <summary>
         /// 返回可用的天气城市
         /// </summary>

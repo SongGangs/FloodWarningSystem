@@ -11,11 +11,13 @@ namespace FWS.EarthquakeHelper
 {
     internal class EarthquakeHandlerImpl : IEarthquakeHandler
     {
+        public List<EarthquakeMsg> EarthquakeMsgs { get; private set; }
         private static string url = "http://www.ceic.ac.cn/";
         private static AccessDataBase db = new AccessDataBase();
 
-        public List<EarthquakeMsg> GetEarthquakrMsgs()
+        public async Task GetEarthquakrMsgs()
         {
+            EarthquakeMsgs = null;//先初始化
             List<string> provinces = GetProvinceNames();
             List<EarthquakeMsg> list = new List<EarthquakeMsg>();
             EarthquakeMsg earthquakrMsg;
@@ -54,10 +56,10 @@ namespace FWS.EarthquakeHelper
                     }
                 }
             }
-            return list;
+            EarthquakeMsgs= list;
         }
 
-        public void SaveEarthquakrMsgs(List<EarthquakeMsg> list)
+        public async Task SaveEarthquakrMsgs(List<EarthquakeMsg> list)
         {
             List<string> sqllist = new List<string>();
             for (int i = 0; i < list.Count; i++)
@@ -73,7 +75,7 @@ namespace FWS.EarthquakeHelper
             db.insertToAccessByBatch(sqllist);
         }
 
-        public void DeleteEarthquakrMsgs()
+        public async Task DeleteEarthquakrMsgs()
         {
             String sql = "DELETE  FROM EarthquakeInfo ";
             db.deleteDt(sql);

@@ -39,9 +39,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Esri.ArcGISRuntime, Version=10.2.7.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL" />
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>References\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\HtmlAgilityPack.dll</HintPath>
+      <HintPath>References\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -50,6 +53,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>References\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -62,7 +69,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WPFVisifire.Charts">
-      <HintPath>C:\Users\SGang\Downloads\VisifireShow\VisifireShow\bin\Debug\WPFVisifire.Charts.dll</HintPath>
+      <HintPath>References\WPFVisifire.Charts.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -75,12 +82,18 @@
     <Compile Include="CitySelectWindow.xaml.cs">
       <DependentUpon>CitySelectWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MapHelper\MapHandler.cs" />
     <Compile Include="temp\CatchHelper.cs" />
+    <Compile Include="TreeView\TreeModel.cs" />
+    <Compile Include="TreeView\TreeViewControl.xaml.cs">
+      <DependentUpon>TreeViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="utility\AccessDataBase.cs" />
     <Compile Include="EarthquakeHelper\EarthquakeHandlerImpl.cs" />
     <Compile Include="EarthquakeHelper\EarthquakeMsg.cs" />
     <Compile Include="EarthquakeHelper\IEarthquakeHandler.cs" />
     <Compile Include="utility\ControlHelper.cs" />
+    <Compile Include="utility\CrackHelper.cs" />
     <Compile Include="utility\WindowFormUtility.cs" />
     <Compile Include="View\DayAndNightWeatherInfo.cs" />
     <Compile Include="View\OnlyDayWeatherInfo.cs" />
@@ -95,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ControlTemplate\CitySelectTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplate\MainWindowDataTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,6 +136,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="style\MainWindowStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TreeView\TreeViewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,7 +175,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HtmlAgilityPack.dll" />
     <Resource Include="Images\weatherBack.jpg" />
     <Resource Include="warning.ico" />
     <Resource Include="Images\day\日间中雨.png" />

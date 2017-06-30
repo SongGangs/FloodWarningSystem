@@ -9,20 +9,24 @@ namespace FWS.EarthquakeHelper
     public interface IEarthquakeHandler
     {
         /// <summary>
+        /// 盛装 从网上抓取的地震信息
+        /// </summary>
+        List<EarthquakeMsg> EarthquakeMsgs { get; }
+        /// <summary>
         /// 获取地震信息
         /// 从中国地震网上抓取
         /// 最近一个月的
         /// </summary>
         /// <returns></returns>
-        List<EarthquakeMsg> GetEarthquakrMsgs();
+        Task GetEarthquakrMsgs();
         /// <summary>
         /// 存储到数据库
         /// </summary>
         /// <param name="list">读取的地震信息</param>
-        void SaveEarthquakrMsgs( List<EarthquakeMsg> list);
+        Task SaveEarthquakrMsgs(List<EarthquakeMsg> list);
         /// <summary>
         /// 删除记录
         /// </summary>
-        void DeleteEarthquakrMsgs();
+        Task DeleteEarthquakrMsgs();
     }
 }

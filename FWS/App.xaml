@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="style/CitySelectStyle.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="ControlTemplate/MainWindowTemplate.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="ControlTemplate/CitySelectTemplate.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="DataTemplate/MainWindowDataTemplate.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

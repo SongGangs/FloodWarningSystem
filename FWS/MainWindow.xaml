@@ -1,24 +1,19 @@
 ﻿<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" x:Class="FWS.MainWindow"
-    xmlns:local="clr-namespace:FWS"
+    xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    x:Class="FWS.MainWindow"
+    xmlns:my="clr-namespace:FWS.TreeView"
     Title="山洪预警系统" Height="700" Width="1050" Foreground="#FF030202" Background="White" MaxWidth="1050" MaxHeight="700"
     WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="Window_Loaded" Icon="Images/warning.png">
     <Window.Resources>
-        <DataTemplate x:Key="WeatherList">
-            <Border Name="border" BorderBrush="#FFC1C4C4" BorderThickness="1"  Margin="3">
-                <StackPanel >
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                        <Label VerticalContentAlignment="Center" Content="{Binding date}" />
-                        <Image Width="35" Height="35" Stretch="Fill" Source="{Binding imageSrc}" Margin="10,0" />
-                        <Label VerticalContentAlignment="Center" Content="{Binding weatherStatus}" HorizontalContentAlignment="Center" Width="50" />
-                        <Label VerticalContentAlignment="Center" Content="{Binding maxTemperature}" BorderThickness="10,0" />
-                        <Label VerticalContentAlignment="Center" Content="{Binding minTemperature}" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </DataTemplate>
+        <esri:SimpleFillSymbol x:Key="RedFillSymbol" Color="#22FF0000">
+            <esri:SimpleFillSymbol.Outline>
+                <esri:SimpleLineSymbol Color="Red" Width="2" />
+            </esri:SimpleFillSymbol.Outline>
+        </esri:SimpleFillSymbol>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -36,63 +31,104 @@
             <Button Name="EarlyWarningMsgBtn" Template="{StaticResource EarlyWarningMsgBtnTemplate}"
                     Click="MsgBtns_Click" />
             <Button Name="WeatherMsgBtn" Template="{StaticResource WeatherMsgBtnTemplate}" Click="WeatherMsgBtns_Click" />
-            <Button Name="EarthquakeMsgBtn" Template="{StaticResource EarthquakeMsgBtnTemplate}" Click="MsgBtns_Click" />
+            <Button Name="EarthquakeMsgBtn" Template="{StaticResource EarthquakeMsgBtnTemplate}"
+                    Click="EarthquakeMsgBtns_Click" />
             <Button Name="InqueryMsgBtn" Template="{StaticResource InqueryMsgBtnTemplate}" Click="InqueryMsgBtns_Click" />
         </StackPanel>
-        <ToolBar Grid.Row="1" VerticalAlignment="Top" Height="29" Grid.ColumnSpan="2" >
+        <ToolBar Grid.Row="1" VerticalAlignment="Top" Height="29" Grid.ColumnSpan="2">
+            <Button Name="AddLayerDataBtn" Content="添加数据" ToolTip="添加数据" Click="AddLayerDataBtn_OnClick"></Button>
         </ToolBar>
-        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Border Name="LayerManagerPanel" Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
+            <StackPanel>
+                <my:TreeViewControl x:Name="MyTreeView" Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}"></my:TreeViewControl>
+            </StackPanel>
         </Border>
-        <esri:MapView Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" >
-            <esri:Map InitialViewpoint="-14675766.357,2695407.734,-6733121.861,6583994.101,102100">
+        <esri:MapView Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" ExtentChanged="MyMapView_ExtentChanged_1" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ExtentChanged">
+                    <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="MyMapView_ExtentChanged"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <esri:Map>
                 <esri:ArcGISDynamicMapServiceLayer ID="USA"
-                    ServiceUri="http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer" />
+               ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
             </esri:Map>
         </esri:MapView>
+        <Border Grid.Column="1" Grid.Row="2" Background="White" BorderBrush="Black" BorderThickness="1"
+			HorizontalAlignment="Right" VerticalAlignment="Bottom"
+			Margin="10" Padding="5">
+            <Border.Effect>
+                <DropShadowEffect/>
+            </Border.Effect>
+            <esri:MapView x:Name="overviewMap" Width="200" Height="200" LayerLoaded="overviewMap_LayerLoaded_1">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="LayerLoaded">
+                        <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="OverviewMap_LayerLoaded"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <esri:MapView.GraphicsOverlays>
+                    <esri:GraphicsOverlay ID="overviewOverlay">
+                        <esri:GraphicsOverlay.Renderer>
+                            <esri:SimpleRenderer>
+                                <esri:SimpleFillSymbol Color="#22FF0000">
+                                    <esri:SimpleFillSymbol.Outline>
+                                        <esri:SimpleLineSymbol Color="Red" Width="2" />
+                                    </esri:SimpleFillSymbol.Outline>
+                                </esri:SimpleFillSymbol>
+                            </esri:SimpleRenderer>
+                        </esri:GraphicsOverlay.Renderer>
+                    </esri:GraphicsOverlay>
+                </esri:MapView.GraphicsOverlays>
+                <esri:Map>
+                    <esri:ArcGISDynamicMapServiceLayer 
+                 ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
+                </esri:Map>
+            </esri:MapView>
+        </Border>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Background="#FFB3AEAE">
             <Label Name="NowTime" Style="{StaticResource DateTimeLable}" Content="2017/6/27 星期一" />
         </StackPanel>
-        <Border Grid.Column="1" Grid.Row="2" Name="WeatherTempPanel" Style="{StaticResource TempBoder}" Visibility="Collapsed">
+        <Border Grid.Column="1" Grid.Row="2" Name="WeatherTempPanel" Style="{StaticResource TempBoder}"
+                Visibility="Collapsed">
             <Border.Background>
-                <ImageBrush  Stretch="Fill" ImageSource="Images/weatherBack.jpg" />
+                <ImageBrush Stretch="Fill" ImageSource="Images/weatherBack.jpg" />
             </Border.Background>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="569*"/>
-                    <RowDefinition Height="35*"/>
+                    <RowDefinition Height="569*" />
+                    <RowDefinition Height="35*" />
                 </Grid.RowDefinitions>
-                <StackPanel Margin="0,5,0.2,0" VerticalAlignment="Top" Panel.ZIndex="1" >
+                <StackPanel Margin="0,5,0.2,0" VerticalAlignment="Top" Panel.ZIndex="1">
                     <Button Name="CloseTempBtn" Template="{StaticResource CloseTempBtnTemplate}"
-                            Tag="Weather" 
+                            Tag="Weather"
                             Click="CloseTempBtn_Click">
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Name="WeatherForecastPanel">
-                    <Label  Content="{Binding city}" Style="{StaticResource WeatherCityLabel}" Foreground="#FF151E5C"></Label>
-                    <StackPanel Orientation="Horizontal" >
-                        <Label  Content="{Binding date}"  Style="{StaticResource WeatherDateLabel }"></Label>
+                    <Label Content="{Binding city}" Style="{StaticResource WeatherCityLabel}" Foreground="#FF151E5C"></Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding date}" Style="{StaticResource WeatherDateLabel }"></Label>
                         <Label Content="{Binding week}" Style="{StaticResource WeatherDateLabel}"></Label>
                     </StackPanel>
-                    <StackPanel Name="dayandnightPanel"  Visibility="Collapsed" >
+                    <StackPanel Name="dayandnightPanel" Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Image Style="{StaticResource WeatherImgLabel}" Source="{Binding imgSrc_day}"></Image>
                             <Image Margin="80,0,0,0" Style="{StaticResource WeatherImgLabel}"
                                    Source="{Binding imgSrc_night}" />
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding weatherStatus_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding weatherStatus_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding maxTemperature}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding minTemperature}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding wind_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding wind_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding windL_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding windL_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
@@ -105,34 +141,37 @@
                         <Label Style="{StaticResource WeatherOtherLabel}" Content="{Binding windL}"></Label>
                     </StackPanel>
                     <StackPanel>
-                        <ListView Name="ListView" ItemTemplate="{StaticResource ResourceKey=WeatherList}" Background="#00000000" SelectionChanged="ListView_SelectionChanged"></ListView>
+                        <ListView Name="WeatherForecastListView"
+                                  ItemTemplate="{StaticResource ResourceKey=WeatherList}" Background="#00000000"
+                                  SelectionChanged="WeatherForecastListView_SelectionChanged">
+                        </ListView>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Name="WeatherDetailPanel" Visibility="Collapsed">
                     <Label Content="{Binding city}" Style="{StaticResource WeatherCityLabel}" Foreground="#FF151E5C"></Label>
-                    <StackPanel Orientation="Horizontal" >
-                        <Label Content="{Binding date}"  Style="{StaticResource WeatherDateLabel }"></Label>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding date}" Style="{StaticResource WeatherDateLabel }"></Label>
                         <Label Content="{Binding week}" Style="{StaticResource WeatherDateLabel}"></Label>
                     </StackPanel>
-                    <StackPanel Name="dayandnightPanel_detail"  Visibility="Collapsed" >
+                    <StackPanel Name="dayandnightPanel_detail" Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Image Style="{StaticResource WeatherImgLabel}" Source="{Binding imgSrc_day}"></Image>
                             <Image Margin="80,0,0,0" Style="{StaticResource WeatherImgLabel}"
                                    Source="{Binding imgSrc_night}" />
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding weatherStatus_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding weatherStatus_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding maxTemperature}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding minTemperature}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding wind_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding wind_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal">
                             <Label Content="{Binding windL_day}" Style="{StaticResource WeatherOtherLabel}"></Label>
                             <Label Content="{Binding windL_night}" Style="{StaticResource WeatherOtherLabel}"></Label>
                         </StackPanel>
@@ -149,20 +188,30 @@
                         </Grid>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0.2,8" >
-                    <Button Name="TagBtn_forecast" Template="{StaticResource TagBtnTemplate}"  Content="天气预报" Tag="forecast" Click="TagBtn_Click" />
-                    <Button  Name="TagBtn_detail" Template="{StaticResource TagBtn2Template}"  Content="天气详情" Tag="detail" Click="TagBtn_Click"/>
+                <StackPanel Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0.2,8">
+                    <Button Name="TagBtn_forecast" Template="{StaticResource TagBtnTemplate}" Content="天气预报"
+                            Tag="forecast" Click="TagBtn_Click" />
+                    <Button Name="TagBtn_detail" Template="{StaticResource TagBtn2Template}" Content="天气详情"
+                            Tag="detail" Click="TagBtn_Click" />
                 </StackPanel>
             </Grid>
         </Border>
-        <Border Grid.Column="1" Grid.Row="2" Name="EarthquakeTempPanel" Style="{StaticResource TempBoder}" >
-            <StackPanel >
-                <StackPanel Margin="0,5,0,0" >
-                    <Button  Template="{StaticResource CloseTempBtnTemplate}" Tag="Earthquake" 
+        <Border Grid.Column="1" Grid.Row="2" Name="EarthquakeTempPanel" Style="{StaticResource TempBoder}">
+            <Grid>
+                <StackPanel Margin="0,5,0,0" VerticalAlignment="Top">
+                    <Button Template="{StaticResource CloseTempBtnTemplate}" Tag="Earthquake"
                             Click="CloseTempBtn_Click">
                     </Button>
                 </StackPanel>
-            </StackPanel>
+                <StackPanel Name="EarthquakeTempPanel_EarthquakeMsgPanel" Margin="0,25,0,0">
+                    <ListView Height="{Binding ElementName=EarthquakeTempPanel_EarthquakeMsgPanel,Path=ActualHeight}"
+                              Name="EarthquakeListView" ItemTemplate="{StaticResource ResourceKey=EarthquakeList}"
+                              Background="#00000000" SelectionChanged="EarthquakeListView_SelectionChanged"
+                              UseLayoutRounding="True" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    </ListView>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

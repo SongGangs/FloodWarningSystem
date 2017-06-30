@@ -13,6 +13,7 @@ namespace FWS.WeatherHelper
 {
     class WeatherHandlerImpl:IWeatherHandler
     {
+        public List<IWeatherMsg> WeatherMsgs { get; private set; }
 
         /// <summary>
         /// 为什么这个mdb这么奇怪
@@ -23,8 +24,9 @@ namespace FWS.WeatherHelper
 
         private static string url = "http://www.nmc.cn/publish/forecast/";
         private static AccessDataBase db = new AccessDataBase();
-        public List<IWeatherMsg> GetWeatherByUrl(string urlcode)
+        public async Task GetWeatherByUrl(string urlcode)
         {
+            WeatherMsgs=null;//先初始化为空
             /*
             string code = db.GetCodeByName(name);
             if (code==null)
@@ -135,7 +137,7 @@ namespace FWS.WeatherHelper
                     List.Add(hoursMsg);
                 }
             }
-            return List;
+            WeatherMsgs = List;
         }
         public ArrayList GetEnableWeather()
         {
