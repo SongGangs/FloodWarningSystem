@@ -35,7 +35,7 @@ namespace FWS
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         private static AccessDataBase db = new AccessDataBase();//数据库操作帮助类
         private static Dictionary<string, object> weatherDictionary;//获取天气展示类别的信息  字典
@@ -44,8 +44,6 @@ namespace FWS
         {
             InitializeComponent();
             CrackHelper.Crack();
-            DataContext = this;      
-
         }
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
@@ -85,24 +83,6 @@ namespace FWS
             timer.Interval = TimeSpan.FromSeconds(1); //设置刷新的间隔时间
             timer.Start();
 
-            //
-            IList<TreeModel> list=new List<TreeModel>();
-            TreeModel tree1=new TreeModel();
-            tree1.Id = "1";
-            tree1.Name = "第一级";
-            list.Add(tree1);
-            list.Add(tree1);
-            list.Add(tree1);
-            list.Add(tree1);
-            TreeModel tree2=new TreeModel();
-            tree2.Id = "1";
-            tree2.Name = "第一级";
-            tree2.Children = list;
-            IList<TreeModel> list2 = new List<TreeModel>();
-            list2.Add(tree2);
-            list2.Add(tree2);
-            list2.Add(tree2);
-            MyTreeView.ItemsSourceData = list2;
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -544,32 +524,41 @@ namespace FWS
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Shapefiles|*.shp|Image files|*.bmp;*.png;*.sid;*.tif|所有文件|*.*";
+                openFileDialog.Filter = "Shapefiles|*.shp|Image files|*.bmp;*.png;*.sid;*.tif";
                 openFileDialog.RestoreDirectory = true;
-                openFileDialog.Multiselect = true;
+                openFileDialog.Multiselect = false;
                 openFileDialog.Title = "文件选取";
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    foreach (var item in openFileDialog.SafeFileNames)
+                    string item = openFileDialog.SafeFileNames[0];
+                    if (item.Contains(".shp"))
                     {
-                        if (item.Contains(".shp"))
-                        {
-                            await LoadShapefile(openFileDialog.FileName);
-                        }
-                        else if (item.Contains(".bmp") || item.Contains(".png") || item.Contains(".sid") ||
-                                 item.Contains(".tif"))
-                        {
-                            var dynLayer =
-                                await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Raster,
-                                    System.IO.Path.GetDirectoryName(openFileDialog.FileName),
-                                    new List<string>(openFileDialog.SafeFileNames));
+                        // await LoadShapefile(openFileDialog.FileName);
+                        var dynLayer =
+                            await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Shapefile,
+                                System.IO.Path.GetDirectoryName(openFileDialog.FileName),
+                                new List<string>(openFileDialog.SafeFileNames));
 
-                            // Add the dynamic map service layer to the map
-                            if (dynLayer != null)
-                            {
-                                dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
-                                MyMapView.Map.Layers.Add(dynLayer);
-                            }
+                        // Add the dynamic map service layer to the map
+                        if (dynLayer != null)
+                        {
+                            dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
+                            MyMapView.Map.Layers.Add(dynLayer);
+                        }
+                    }
+                    else if (item.Contains(".bmp") || item.Contains(".png") || item.Contains(".sid") ||
+                             item.Contains(".tif"))
+                    {
+                        var dynLayer =
+                            await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Raster,
+                                System.IO.Path.GetDirectoryName(openFileDialog.FileName),
+                                new List<string>(openFileDialog.SafeFileNames));
+
+                        // Add the dynamic map service layer to the map
+                        if (dynLayer != null)
+                        {
+                            //dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
+                            MyMapView.Map.Layers.Add(dynLayer);
                         }
                     }
                 }
@@ -615,27 +604,7 @@ namespace FWS
             await AddSingleGraphicAsync();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name = null)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-        }
-        private Envelope _Extent = null;
-        public Envelope Extent
-        {
-            get
-            {
-                return _Extent;
-            }
-            set
-            {
-                _Extent = value;
-                OnPropertyChanged("Extent");
-            }
-        }
+       
         public async void MyMapView_ExtentChanged(object sender, System.EventArgs e)
         {
             var graphicsOverlay = overviewMap.GraphicsOverlays["overviewOverlay"];
@@ -680,17 +649,42 @@ namespace FWS
             { }
         }
 
-        private void MyMapView_ExtentChanged_1(object sender, EventArgs e)
-        {
-            var currentViewpoint = MyMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
-            var viewpointExtent = currentViewpoint.TargetGeometry.Extent;
-        }
 
         private void overviewMap_LayerLoaded_1(object sender, LayerLoadedEventArgs e)
         {
 
         }
         #endregion
+
+        private static int m_LayerCount = 0;
+        private void MyMapView_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            DependencyPropertyDescriptor dpd = DependencyPropertyDescriptor.FromProperty(MapView.MapProperty, typeof(MapView));
+            if (dpd != null)
+            {
+                int count = this.MyMapView.Map.Layers.Count;
+                if (count>m_LayerCount)
+                {
+                    m_LayerCount = count;
+                    BindTreeViewDataContent(m_LayerCount);
+                }
+               
+            }
+        }
+
+        private async void BindTreeViewDataContent(int i)
+        {
+                IList<TreeModel> list = new List<TreeModel>();
+                for (int j = 0; j < m_LayerCount; j++) { 
+                TreeModel tree1 = new TreeModel();
+                tree1.Id = this.MyMapView.Map.Layers[j].ID;
+                tree1.Name = this.MyMapView.Map.Layers[j ].DisplayName;
+                list.Add(tree1);
+                }
+                MyTreeView.ItemsSourceData = list;
+        }
+
+      
 
 
        

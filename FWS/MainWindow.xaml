@@ -40,18 +40,19 @@
         </ToolBar>
         <Border Name="LayerManagerPanel" Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
             <StackPanel>
-                <my:TreeViewControl x:Name="MyTreeView" Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}"></my:TreeViewControl>
+                <my:TreeViewControl x:Name="MyTreeView" Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}" ></my:TreeViewControl>
             </StackPanel>
         </Border>
-        <esri:MapView Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" ExtentChanged="MyMapView_ExtentChanged_1" >
+        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" PropertyChanged="MyMapView_PropertyChanged"  >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ExtentChanged">
                     <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="MyMapView_ExtentChanged"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <esri:Map>
-                <esri:ArcGISDynamicMapServiceLayer ID="USA"
-               ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
+
+            <esri:Map x:Name="map">
+                <esri:ArcGISDynamicMapServiceLayer ID="USA" DisplayName="USA"
+               ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"  />
             </esri:Map>
         </esri:MapView>
         <Border Grid.Column="1" Grid.Row="2" Background="White" BorderBrush="Black" BorderThickness="1"

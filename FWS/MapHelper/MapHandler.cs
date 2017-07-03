@@ -41,7 +41,7 @@ namespace FWS.MapHelper
                 // Create and initialize new ArcGISLocalDynamicMapServiceLayer over the local service.
                 var dynLayer = new ArcGISDynamicMapServiceLayer()
                 {
-                    ID = "Workspace: " + (new DirectoryInfo(directoryPath)).Name,
+                    ID = (new DirectoryInfo(directoryPath)).Name,
                     ServiceUri = localMapService.UrlMapService
                 };
                 await dynLayer.InitializeAsync();
@@ -59,7 +59,7 @@ namespace FWS.MapHelper
                 foreach (string fileName in fileNames)
                 {
                     // Create a new DynamicLayerInfo (to make changes to existing map service layers use the CreateDynamicLayerInfosFromLayerInfos() method.
-                    DynamicLayerInfo dynamicLayerInfo = new DynamicLayerInfo { ID = counter, Name = "Dataset: " + fileName };
+                    DynamicLayerInfo dynamicLayerInfo = new DynamicLayerInfo { ID = counter, Name =fileName };
 
                     // Create a DataSource object to represent the physical datasource implementation (table or raster) which will become the DataSource 
                     // property of a new LayerDataSource in the map service. Other supported datasource types are JoinDataSource and QueryDataSource.

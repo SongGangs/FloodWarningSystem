@@ -19,6 +19,10 @@ namespace FWS.TreeView
         /// </summary>
         private string _name;
         /// <summary>
+        /// 显示的渲染颜色
+        /// </summary>
+        private string _color;
+        /// <summary>
         /// 图标路径
         /// </summary>
         private string _icon;
@@ -26,18 +30,8 @@ namespace FWS.TreeView
         /// 选中状态
         /// </summary>
         private bool _isChecked;
-        /// <summary>
-        /// 折叠状态
-        /// </summary>
-        private bool _isExpanded;
-        /// <summary>
-        /// 子项
-        /// </summary>
-        private IList<TreeModel> _children;
-        /// <summary>
-        /// 父项
-        /// </summary>
-        private TreeModel _parent;
+        
+       
         #endregion
 
         /// <summary>
@@ -45,10 +39,9 @@ namespace FWS.TreeView
         /// </summary>
         public TreeModel()
         {
-            Children = new List<TreeModel>();
             _isChecked = false;
-            IsExpanded = false;
             //_icon = "../Images/weather.jpg";
+            _color = "black";
         }
 
         /// <summary>
@@ -77,6 +70,14 @@ namespace FWS.TreeView
             get { return _icon; }
             set { _icon = value; }
         }
+        /// <summary>
+        /// 渲染颜色
+        /// </summary>
+        public string Color
+        {
+            get { return _color; }
+            set { _color = value; }
+        }
 
         /// <summary>
         /// 指针悬停时的显示说明
@@ -104,85 +105,7 @@ namespace FWS.TreeView
                 {
                     _isChecked = value;
                     NotifyPropertyChanged("IsChecked");
-
-                    if (_isChecked)
-                    {
-                        //如果选中则父项也应该选中
-                        if (Parent != null)
-                        {
-                            Parent.IsChecked = true;
-                        }
-                    }
-                    else
-                    {
-                        //如果取消选中子项也应该取消选中
-                        foreach (TreeModel child in Children)
-                        {
-                            child.IsChecked = false;
-                        }
-                    }
                 }
-            }
-        }
-
-        /// <summary>
-        /// 是否展开
-        /// </summary>
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                if (value != _isExpanded)
-                {
-                    //折叠状态改变
-                    _isExpanded = value;
-                    NotifyPropertyChanged("IsExpanded");
-                }
-            }
-        }
-
-        /// <summary>
-        /// 父项
-        /// </summary>
-        public TreeModel Parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
-        }
-
-        /// <summary>
-        /// 子项
-        /// </summary>
-        public IList<TreeModel> Children
-        {
-            get { return _children; }
-            set { _children = value; }
-        }
-
-        /// <summary>
-        /// 设置所有子项的选中状态
-        /// </summary>
-        /// <param name="isChecked"></param>
-        public void SetChildrenChecked(bool isChecked)
-        {
-            foreach (TreeModel child in Children)
-            {
-                child.IsChecked = IsChecked;
-                child.SetChildrenChecked(IsChecked);
-            }
-        }
-
-        /// <summary>
-        /// 设置所有子项展开状态
-        /// </summary>
-        /// <param name="isExpanded"></param>
-        public void SetChildrenExpanded(bool isExpanded)
-        {
-            foreach (TreeModel child in Children)
-            {
-                child.IsExpanded = isExpanded;
-                child.SetChildrenExpanded(isExpanded);
             }
         }
 

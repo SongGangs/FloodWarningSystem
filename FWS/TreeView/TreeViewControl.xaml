@@ -12,16 +12,6 @@
                 <TreeView Name="Tree">
                     <TreeView.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Name="menuExpandAll" Header="全部展开" Click="menuExpandAll_Click">
-                                <MenuItem.Icon>
-                                    <Image Source="../Images/weather.jpg" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Name="menuUnExpandAll" Header="全部折叠" Click="menuUnExpandAll_Click">
-                                <MenuItem.Icon>
-                                    <Image Source="../Images/weather.jpg" />
-                                </MenuItem.Icon>
-                            </MenuItem>
                             <MenuItem Name="menuSelectAll" Header="全部选中" Click="menuSelectAll_Click">
                                 <MenuItem.Icon>
                                     <Image Source="../Images/weather.jpg" />
@@ -41,16 +31,19 @@
                         </Style>
                     </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type local:TreeModel}"  ItemsSource="{Binding Children}">
-                            <StackPanel  Margin="-2,0,0,0" Orientation="Horizontal" x:Name="staTree">
-                                <CheckBox ToolTip="{Binding ToolTip}" FontSize="14" FontFamily="微软雅黑" Tag="{Binding Children}" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                        <HierarchicalDataTemplate DataType="{x:Type local:TreeModel}" >
+                            <StackPanel  Margin="0,2,0,10" Orientation="Horizontal" x:Name="staTree" Background="{x:Null}">
+                                <CheckBox ToolTip="{Binding ToolTip}" FontSize="14" FontFamily="微软雅黑"  IsChecked="{Binding IsChecked, Mode=TwoWay}">
                                     <StackPanel Orientation="Horizontal">
                                         <Image VerticalAlignment="Center" Source="{Binding Icon}" ></Image>
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"></TextBlock>
+                                            <Rectangle Fill="{Binding Color}" Width="20" Height="20" Stroke="Black"></Rectangle>
+                                        </StackPanel>
                                     </StackPanel>
                                     <CheckBox.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Name="menuSelectAllChild" Header="全部选中子项" Click="menuSelectAllChild_Click">
+                                            <MenuItem Name="ZoomIn" Header="缩放之图层" Click="menuZoomIn_Click">
                                                 <MenuItem.Icon>
                                                     <Image Source="../Images/warning.png" />
                                                 </MenuItem.Icon>

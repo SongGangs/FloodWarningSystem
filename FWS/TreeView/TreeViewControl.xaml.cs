@@ -64,10 +64,6 @@ namespace FWS.TreeView
                     tree.IsChecked = true;
                     return 1;
                 }
-                if (SetCheckedById(id, tree.Children) == 1)
-                {
-                    return 1;
-                }
             }
 
             return 0;
@@ -85,10 +81,6 @@ namespace FWS.TreeView
                 if (tree.Id.Equals(id))
                 {
                     tree.IsChecked = true;
-                    return 1;
-                }
-                if (SetCheckedById(id, tree.Children) == 1)
-                {
                     return 1;
                 }
             }
@@ -120,70 +112,20 @@ namespace FWS.TreeView
                 {
                     treeList.Add(tree);
                 }
-                foreach (var child in GetCheckedItemsIgnoreRelation(tree.Children))
-                {
-                    treeList.Add(child);
-                }
             }
             return treeList;
         }
 
         /// <summary>
-        /// 选中所有子项菜单事件
+        /// 缩放至图层
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void menuSelectAllChild_Click(object sender, RoutedEventArgs e)
+        private void menuZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Tree.SelectedItem != null)
-            {
-                TreeView.TreeModel tree = (TreeView.TreeModel)Tree.SelectedItem;
-                tree.IsChecked = true;
-                tree.SetChildrenChecked(true);
-            }
-        }
-
-        /// <summary>
-        /// 全部展开菜单事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void menuExpandAll_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                foreach (TreeView.TreeModel tree in Tree.ItemsSource)
-                {
-                    tree.IsExpanded = true;
-                    tree.SetChildrenExpanded(true);
-                }
-            }
-            catch (Exception)
-            {
-            }
             
         }
 
-        /// <summary>
-        /// 全部折叠菜单事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void menuUnExpandAll_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                foreach (TreeView.TreeModel tree in Tree.ItemsSource)
-                {
-                    tree.IsExpanded = false;
-                    tree.SetChildrenExpanded(false);
-                }
-            }
-            catch (Exception)
-            {
-            }
-            
-        }
 
         /// <summary>
         /// 全部选中事件
@@ -197,7 +139,6 @@ namespace FWS.TreeView
                 foreach (TreeView.TreeModel tree in Tree.ItemsSource)
                 {
                     tree.IsChecked = true;
-                    tree.SetChildrenChecked(true);
                 }
             }
             catch (Exception)
@@ -218,7 +159,6 @@ namespace FWS.TreeView
                 foreach (TreeView.TreeModel tree in Tree.ItemsSource)
                 {
                     tree.IsChecked = false;
-                    tree.SetChildrenChecked(false);
                 }
             }
             catch (Exception)
