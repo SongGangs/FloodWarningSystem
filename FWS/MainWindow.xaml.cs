@@ -732,6 +732,20 @@ namespace FWS
             }
         }
 
+        /// <summary>
+        /// 移除图层
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void menuRemoveLayer_Click(object sender, RoutedEventArgs e)
+        {
+            if (LayersListView.SelectedItem != null)
+            {
+                string id = (LayersListView.SelectedItem as Layer).ID.ToString();
+                MyMapView.Map.Layers.Remove(id);
+            }
+        }
+
 
     }
 }

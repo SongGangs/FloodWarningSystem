@@ -14,13 +14,13 @@
         </Border>
     </DataTemplate>
     <DataTemplate x:Key="EarthquakeList">
-        <Border Name="border"   Margin="1">
+        <Border Name="border" BorderBrush="#FFC1C4C4"   Margin="1"  BorderThickness="2"  >
             <StackPanel Orientation="Horizontal">
                 <StackPanel  HorizontalAlignment="Left" >
-                    <Label Content="{Binding level}"  Height="51.2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+                    <Label Content="{Binding level}"  Height="51.2" Width="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
                     </StackPanel>
-                <StackPanel  HorizontalAlignment="Left" >
-                    <Label VerticalContentAlignment="Center" Content="{Binding position}" HorizontalAlignment="Left" />
+                <StackPanel  HorizontalAlignment="Left" Width="190" >
+                    <Label VerticalContentAlignment="Center"   Content="{Binding position}" HorizontalAlignment="Center" />
                     <!--<StackPanel Orientation="Horizontal">
                         <Label VerticalContentAlignment="Center" Content="{Binding longitude}" HorizontalAlignment="Left" />
                         <Label VerticalContentAlignment="Center" Content="{Binding latitude}" HorizontalAlignment="Left" />
@@ -28,7 +28,7 @@
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="{Binding time}" />
                 </StackPanel>
                 <StackPanel  HorizontalAlignment="Right" >
-                    <Label VerticalContentAlignment="Center" Content="{Binding depth}"  Height="51.2" />
+                    <Label VerticalContentAlignment="Center" Width="25" Content="{Binding depth}"  Height="51.2" />
                 </StackPanel>
             </StackPanel>
         </Border>

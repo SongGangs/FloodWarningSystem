@@ -18,11 +18,16 @@
                 <StackPanel Orientation="Horizontal">
                     <CheckBox ToolTip="{Binding DisplayName}" Tag="{Binding ID}" FontSize="14" FontFamily="微软雅黑"  IsChecked="{Binding IsVisible}" >
                         <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding DisplayName}"></Label>
+                            <Label Content="{Binding DisplayName}"></Label>
                         </StackPanel>
                         <CheckBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Name="ZoomIn" Header="缩放之图层" Click="menuZoomIn_Click">
+                                <MenuItem Name="ZoomIn" Header="缩放至图层" Click="menuZoomIn_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/warning.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Name="RemoveLayer" Header="移除图层" Click="menuRemoveLayer_Click">
                                     <MenuItem.Icon>
                                         <Image Source="Images/warning.png" />
                                     </MenuItem.Icon>
@@ -62,7 +67,10 @@
                 <my:TreeViewControl x:Name="MyTreeView"  Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}" ></my:TreeViewControl>
             </StackPanel>-->
             <StackPanel>
-                <TextBlock Text="Map Layers" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal">
+                    <Image x:Name="image" Width="30" Source="Images/图层.png"  Margin="0,0,5,0"></Image>
+                    <Label VerticalContentAlignment="Center"  Content="Map Layers" FontWeight="Bold" FontSize="16" />
+                </StackPanel>
                 <ListView x:Name="LayersListView" ItemsSource="{Binding ElementName=MyMapView, Path=Map.Layers}" ItemTemplate="{StaticResource LayerList}" BorderThickness="0">
                 </ListView>
             </StackPanel>
@@ -226,6 +234,11 @@
                     <Button Template="{StaticResource CloseTempBtnTemplate}" Tag="Earthquake"
                             Click="CloseTempBtn_Click">
                     </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"  VerticalAlignment="Top">
+                    <Label Width="60" Content="震级(M)" HorizontalContentAlignment="Center" ></Label>
+                    <Label Width="125" Content="地点/时间" HorizontalContentAlignment="Center"></Label>
+                    <Label Width="70" Content="深度(千米)" HorizontalContentAlignment="Center"></Label>
                 </StackPanel>
                 <StackPanel Name="EarthquakeTempPanel_EarthquakeMsgPanel" Margin="0,25,0,0">
                     <ListView Height="{Binding ElementName=EarthquakeTempPanel_EarthquakeMsgPanel,Path=ActualHeight}"
