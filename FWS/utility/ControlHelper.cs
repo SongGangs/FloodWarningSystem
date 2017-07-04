@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace Mineral.Helper
+namespace FWS.utility
 {
     class ControlHelper
     {

@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace AllDemo
+namespace FWS.utility
 {
     public class WindowsMessage
     {

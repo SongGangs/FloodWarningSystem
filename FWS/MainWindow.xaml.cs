@@ -13,7 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using AllDemo;
 using Esri.ArcGISRuntime.Controls;
 using Esri.ArcGISRuntime.Data;
 using Esri.ArcGISRuntime.Geometry;
@@ -44,6 +43,7 @@ namespace FWS
         {
             InitializeComponent();
             CrackHelper.Crack();
+            DataContext = this;    
         }
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
@@ -70,11 +70,26 @@ namespace FWS
         {
             IEarthquakeHandler earthquake=new EarthquakeHandlerImpl();
            await earthquake.GetEarthquakrMsgs();
-            this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
+           this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
            this.EarthquakeTempPanel.Visibility = Visibility.Visible;
-
+            List<EarthquakeMsg> list = earthquake.EarthquakeMsgs;
+            GraphicsLayer graphicsLayer=new GraphicsLayer();
+            graphicsLayer.DisplayName = "地震信息点";
+            graphicsLayer.ID = "earthquake";
+            for (int i = 0; i < list.Count; i++)
+            {
+                Graphic g = new Graphic();
+                Esri.ArcGISRuntime.Geometry.Geometry geometry = new MapPoint(list[i].longitude, list[i].latitude,
+                    SpatialReferences.Wgs84);
+                g.Geometry = geometry;
+                g.Attributes.Add("position", list[i].position);
+                g.Symbol = new SimpleMarkerSymbol() {Color = MapHandler.GetRandomColor(), Size = 15};
+                graphicsLayer.Graphics.Add(g);
+            }
+            this.MyMapView.Map.Layers.Add(graphicsLayer);
         }
-
+        
+      
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //时间定时器 实时更新
@@ -285,7 +300,7 @@ namespace FWS
                         weatherItem.minTemperature = dayMsg.minTemp;
                         string weatherStatus = dayMsg.weatherStatus.Split('转')[0].Trim();
                         weatherItem.weatherStatus = weatherStatus;
-                        weatherItem.imageSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(weatherStatus);
+                        weatherItem.imageSrc = "../Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(weatherStatus);
                         weatherLists.Add(weatherItem);
                     }
                 }
@@ -412,20 +427,39 @@ namespace FWS
             RendererCharts(weatherItem.areaID, weatherItem.date);
             TagBtn_Click(this.TagBtn_detail, null);
         }
+
         /// <summary>
         /// 地震信息
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EarthquakeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void EarthquakeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EarthquakeMsg msg=this.EarthquakeListView.SelectedItem as EarthquakeMsg;
+            EarthquakeMsg msg = this.EarthquakeListView.SelectedItem as EarthquakeMsg;
             if (msg == null)
             {
                 MessageBox.Show("点击的地震信息暂无信息。");
                 return;
             }
+            GraphicsLayer layer = this.MyMapView.Map.Layers["earthquake"] as GraphicsLayer;
+            if (layer == null)
+            {
+                return;
+            }
+            foreach (Graphic g in layer.Graphics)
+            {
+                if (g.Attributes["position"].Equals(msg.position))
+                {
+                    g.IsSelected = true;
+                    await this.MyMapView.SetViewAsync(g.Geometry.Extent.GetCenter(), 100000);
+                }
+                else
+                {
+                    g.IsSelected = false;
+                }
+            }
         }
+
         #region 折线图
         public void CreateChartSpline(string Charttitle, List<DateTime> lsTime, List<string> temperatures)
         {
@@ -530,36 +564,31 @@ namespace FWS
                 openFileDialog.Title = "文件选取";
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    string item = openFileDialog.SafeFileNames[0];
-                    if (item.Contains(".shp"))
+                    string item = openFileDialog.SafeFileNames[0].Split('.')[1];
+                    WorkspaceFactoryType type = WorkspaceFactoryType.Raster;
+                    switch (item)
                     {
-                        // await LoadShapefile(openFileDialog.FileName);
-                        var dynLayer =
-                            await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Shapefile,
-                                System.IO.Path.GetDirectoryName(openFileDialog.FileName),
-                                new List<string>(openFileDialog.SafeFileNames));
-
-                        // Add the dynamic map service layer to the map
-                        if (dynLayer != null)
-                        {
-                            dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
-                            MyMapView.Map.Layers.Add(dynLayer);
-                        }
+                        case "shp":
+                            type = WorkspaceFactoryType.Shapefile;
+                            break;
+                        case "bmp":
+                        case "png":
+                        case "sid":
+                        case "tif":
+                            type = WorkspaceFactoryType.Raster;
+                            break;
                     }
-                    else if (item.Contains(".bmp") || item.Contains(".png") || item.Contains(".sid") ||
-                             item.Contains(".tif"))
-                    {
-                        var dynLayer =
-                            await MapHandler.AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType.Raster,
-                                System.IO.Path.GetDirectoryName(openFileDialog.FileName),
-                                new List<string>(openFileDialog.SafeFileNames));
 
-                        // Add the dynamic map service layer to the map
-                        if (dynLayer != null)
-                        {
-                            //dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
-                            MyMapView.Map.Layers.Add(dynLayer);
-                        }
+                    var dynLayer =
+                        await MapHandler.AddFileDatasetToDynamicMapServiceLayer(type,
+                            System.IO.Path.GetDirectoryName(openFileDialog.FileName),
+                            new List<string>(openFileDialog.SafeFileNames),this.MyMapView.Map.Layers.Count);
+                    // Add the dynamic map service layer to the map
+                    if (dynLayer != null)
+                    {
+                        dynLayer.DisplayName = dynLayer.DynamicLayerInfos[0].Name;
+                        MyMapView.Map.Layers.Add(dynLayer);
+                        MyMapView.SetView(dynLayer.FullExtent.Extent.Expand(0.5));
                     }
                 }
             }
@@ -656,6 +685,8 @@ namespace FWS
         }
         #endregion
 
+        #region 用TreeView+属性改变事件  效率不好
+        /*
         private static int m_LayerCount = 0;
         private void MyMapView_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -683,11 +714,24 @@ namespace FWS
                 }
                 MyTreeView.ItemsSourceData = list;
         }
+        */
+        #endregion
 
-      
 
+        /// <summary>
+        /// 缩放至图层
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void menuZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            if (LayersListView.SelectedItem != null)
+            {
+                string id = (LayersListView.SelectedItem as Layer).ID.ToString();
+                MyMapView.SetView(MyMapView.Map.Layers[id].FullExtent.GetCenter(),5000);
+            }
+        }
 
-       
 
     }
 }

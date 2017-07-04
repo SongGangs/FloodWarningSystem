@@ -5,7 +5,6 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     x:Class="FWS.MainWindow"
-    xmlns:my="clr-namespace:FWS.TreeView"
     Title="山洪预警系统" Height="700" Width="1050" Foreground="#FF030202" Background="White" MaxWidth="1050" MaxHeight="700"
     WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="Window_Loaded" Icon="Images/warning.png">
     <Window.Resources>
@@ -14,6 +13,26 @@
                 <esri:SimpleLineSymbol Color="Red" Width="2" />
             </esri:SimpleFillSymbol.Outline>
         </esri:SimpleFillSymbol>
+        <DataTemplate x:Key="LayerList">
+            <Border Name="border" BorderBrush="#FFC1C4C4"  Margin="3">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox ToolTip="{Binding DisplayName}" Tag="{Binding ID}" FontSize="14" FontFamily="微软雅黑"  IsChecked="{Binding IsVisible}" >
+                        <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding DisplayName}"></Label>
+                        </StackPanel>
+                        <CheckBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Name="ZoomIn" Header="缩放之图层" Click="menuZoomIn_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="Images/warning.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </CheckBox.ContextMenu>
+                    </CheckBox>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -39,20 +58,24 @@
             <Button Name="AddLayerDataBtn" Content="添加数据" ToolTip="添加数据" Click="AddLayerDataBtn_OnClick"></Button>
         </ToolBar>
         <Border Name="LayerManagerPanel" Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
+            <!--<StackPanel>
+                <my:TreeViewControl x:Name="MyTreeView"  Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}" ></my:TreeViewControl>
+            </StackPanel>-->
             <StackPanel>
-                <my:TreeViewControl x:Name="MyTreeView" Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}" ></my:TreeViewControl>
+                <TextBlock Text="Map Layers" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                <ListView x:Name="LayersListView" ItemsSource="{Binding ElementName=MyMapView, Path=Map.Layers}" ItemTemplate="{StaticResource LayerList}" BorderThickness="0">
+                </ListView>
             </StackPanel>
         </Border>
-        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" PropertyChanged="MyMapView_PropertyChanged"  >
+        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}"  >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ExtentChanged">
                     <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="MyMapView_ExtentChanged"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-
             <esri:Map x:Name="map">
-                <esri:ArcGISDynamicMapServiceLayer ID="USA" DisplayName="USA"
-               ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"  />
+                <esri:ArcGISTiledMapServiceLayer ID="World" DisplayName="World Topo Map" 
+                    ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
             </esri:Map>
         </esri:MapView>
         <Border Grid.Column="1" Grid.Row="2" Background="White" BorderBrush="Black" BorderThickness="1"
@@ -80,9 +103,9 @@
                         </esri:GraphicsOverlay.Renderer>
                     </esri:GraphicsOverlay>
                 </esri:MapView.GraphicsOverlays>
-                <esri:Map>
-                    <esri:ArcGISDynamicMapServiceLayer 
-                 ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
+                <esri:Map >
+                    <esri:ArcGISTiledMapServiceLayer 
+                    ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
                 </esri:Map>
             </esri:MapView>
         </Border>
@@ -144,7 +167,7 @@
                     <StackPanel>
                         <ListView Name="WeatherForecastListView"
                                   ItemTemplate="{StaticResource ResourceKey=WeatherList}" Background="#00000000"
-                                  SelectionChanged="WeatherForecastListView_SelectionChanged">
+                                  SelectionChanged="WeatherForecastListView_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         </ListView>
                     </StackPanel>
                 </StackPanel>

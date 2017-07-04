@@ -10,6 +10,7 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Layers;
 using Esri.ArcGISRuntime.LocalServices;
 using Esri.ArcGISRuntime.Symbology;
+using FWS.EarthquakeHelper;
 
 namespace FWS.MapHelper
 {
@@ -25,7 +26,7 @@ namespace FWS.MapHelper
         /// <param name="directoryPath"></param>
         /// <param name="fileNames"></param>
         /// <returns></returns>
-        public static async Task<ArcGISDynamicMapServiceLayer> AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType workspaceType, string directoryPath, List<string> fileNames)
+        public static async Task<ArcGISDynamicMapServiceLayer> AddFileDatasetToDynamicMapServiceLayer(WorkspaceFactoryType workspaceType, string directoryPath, List<string> fileNames,int layercount)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace FWS.MapHelper
                 // Create and initialize new ArcGISLocalDynamicMapServiceLayer over the local service.
                 var dynLayer = new ArcGISDynamicMapServiceLayer()
                 {
-                    ID = (new DirectoryInfo(directoryPath)).Name,
+                    ID = (new DirectoryInfo(directoryPath)).Name +"--"+ layercount,
                     ServiceUri = localMapService.UrlMapService
                 };
                 await dynLayer.InitializeAsync();
@@ -144,13 +145,13 @@ namespace FWS.MapHelper
         }
 
         // Utility function: Generate a random System.Windows.Media.Color
-        private static Color GetRandomColor()
+        public static Color GetRandomColor()
         {
             var colorBytes = new byte[3];
             _random.NextBytes(colorBytes);
             return Color.FromRgb(colorBytes[0], colorBytes[1], colorBytes[2]);
         }
 
-
+      
     }
 }

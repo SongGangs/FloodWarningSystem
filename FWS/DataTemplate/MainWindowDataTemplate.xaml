@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DataTemplate x:Key="WeatherList">
-        <Border Name="border" BorderBrush="#FFC1C4C4" BorderThickness="1"  Margin="3">
+        <Border Name="border" BorderBrush="#FFC1C4C4" BorderThickness="1"  Margin="2,3">
             <StackPanel >
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                     <Label VerticalContentAlignment="Center" Content="{Binding date}" />
-                    <Image Width="35" Height="35" Stretch="Fill" Source="{Binding imageSrc}" Margin="10,0" />
-                    <Label VerticalContentAlignment="Center" Content="{Binding weatherStatus}" HorizontalContentAlignment="Center" Width="50" />
-                    <Label VerticalContentAlignment="Center" Content="{Binding maxTemperature}" BorderThickness="10,0" />
+                    <Image Width="35" Height="35" Stretch="Fill" Source="{Binding imageSrc}" Margin="5,0" />
+                    <Label VerticalContentAlignment="Center" Content="{Binding weatherStatus}" HorizontalContentAlignment="Center" Width="70" />
+                    <Label VerticalContentAlignment="Center" Content="{Binding maxTemperature}" BorderThickness="5,0" />
                     <Label VerticalContentAlignment="Center" Content="{Binding minTemperature}" />
                 </StackPanel>
             </StackPanel>
@@ -33,4 +33,6 @@
             </StackPanel>
         </Border>
     </DataTemplate>
+    
+    
 </ResourceDictionary>
