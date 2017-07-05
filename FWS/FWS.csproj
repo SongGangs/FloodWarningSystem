@@ -203,6 +203,20 @@
   <ItemGroup>
     <Resource Include="Images\图层.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Close32.png" />
+    <Resource Include="Images\ZoomFullExtent32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AddContent32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ZoomInTool_B_32.png" />
+    <Resource Include="Images\ZoomOutTool_B_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PanTool_B_32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

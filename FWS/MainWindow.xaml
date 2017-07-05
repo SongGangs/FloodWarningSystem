@@ -24,12 +24,12 @@
                             <ContextMenu>
                                 <MenuItem Name="ZoomIn" Header="缩放至图层" Click="menuZoomIn_Click">
                                     <MenuItem.Icon>
-                                        <Image Source="Images/warning.png" />
+                                        <Image Source="Images/ZoomFullExtent32.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Name="RemoveLayer" Header="移除图层" Click="menuRemoveLayer_Click">
                                     <MenuItem.Icon>
-                                        <Image Source="Images/warning.png" />
+                                        <Image Source="Images/Close32.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>
@@ -57,11 +57,27 @@
             <Button Name="WeatherMsgBtn" Template="{StaticResource WeatherMsgBtnTemplate}" Click="WeatherMsgBtns_Click" />
             <Button Name="EarthquakeMsgBtn" Template="{StaticResource EarthquakeMsgBtnTemplate}"
                     Click="EarthquakeMsgBtns_Click" />
-            <Button Name="InqueryMsgBtn" Template="{StaticResource InqueryMsgBtnTemplate}" Click="InqueryMsgBtns_Click" />
+            <!--<Button Name="InqueryMsgBtn" Template="{StaticResource InqueryMsgBtnTemplate}" Click="InqueryMsgBtns_Click" />-->
         </StackPanel>
-        <ToolBar Grid.Row="1" VerticalAlignment="Top" Height="29" Grid.ColumnSpan="2">
-            <Button Name="AddLayerDataBtn" Content="添加数据" ToolTip="添加数据" Click="AddLayerDataBtn_OnClick"></Button>
+        <ToolBar x:Name="ToolBar" Grid.Row="1" Grid.ColumnSpan="2">
+            <Button Template="{StaticResource ZoomInBtn}" Name="ZoomInBtn" Width="24"
+                    Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="放大"
+                    Click="ZoomInBtn_OnClick" Margin="5,0,0,0">
+            </Button>
+            <Button Template="{StaticResource ZoomOutBtn}" Name="ZoomOutBtn" Width="24"
+                    Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="缩小"
+                    Click="ZoomOutBtn_OnClick" Margin="10,0">
+            </Button>
+            <Button Template="{StaticResource PanBtn}" Name="PanBtn" Width="24"
+                    Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="平移"
+                    Click="PanBtn_OnClick" >
+            </Button>
+            <Button Template="{StaticResource AddLayerDataBtn}" Name="AddLayerDataBtn" Width="24"
+                    Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="添加数据"
+                    Click="AddLayerDataBtn_OnClick" Margin="10,0">
+            </Button>
         </ToolBar>
+
         <Border Name="LayerManagerPanel" Grid.Row="2" Grid.Column="0" Style="{StaticResource LayerlistBorder}">
             <!--<StackPanel>
                 <my:TreeViewControl x:Name="MyTreeView"  Height="{Binding ElementName=LayerManagerPanel,Path=ActualHeight}" ></my:TreeViewControl>
@@ -92,7 +108,7 @@
             <Border.Effect>
                 <DropShadowEffect/>
             </Border.Effect>
-            <esri:MapView x:Name="overviewMap" Width="200" Height="200" LayerLoaded="overviewMap_LayerLoaded_1">
+            <esri:MapView  x:Name="overviewMap" Width="200" Height="200" LayerLoaded="overviewMap_LayerLoaded_1" Map="{Binding ElementName=map, Mode=OneWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="LayerLoaded">
                         <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="OverviewMap_LayerLoaded"/>
@@ -111,10 +127,7 @@
                         </esri:GraphicsOverlay.Renderer>
                     </esri:GraphicsOverlay>
                 </esri:MapView.GraphicsOverlays>
-                <esri:Map >
-                    <esri:ArcGISTiledMapServiceLayer 
-                    ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
-                </esri:Map>
+                <!--<esri:Map Layers="{Binding ElementName=map, Mode=OneWay}" />-->
             </esri:MapView>
         </Border>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Background="#FFB3AEAE">

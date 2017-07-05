@@ -36,19 +36,19 @@ namespace FWS
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static AccessDataBase db = new AccessDataBase();//数据库操作帮助类
-        private static Dictionary<string, object> weatherDictionary;//获取天气展示类别的信息  字典
+        private static AccessDataBase db = new AccessDataBase(); //数据库操作帮助类
+        private static Dictionary<string, object> weatherDictionary; //获取天气展示类别的信息  字典
 
         public MainWindow()
         {
             InitializeComponent();
             CrackHelper.Crack();
-            DataContext = this;    
+            DataContext = this;
         }
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
-          
+
             /* 
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
            List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
@@ -68,12 +68,12 @@ namespace FWS
         /// <param name="e"></param>
         private async void EarthquakeMsgBtns_Click(object sender, RoutedEventArgs e)
         {
-            IEarthquakeHandler earthquake=new EarthquakeHandlerImpl();
-           await earthquake.GetEarthquakrMsgs();
-           this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
-           this.EarthquakeTempPanel.Visibility = Visibility.Visible;
+            IEarthquakeHandler earthquake = new EarthquakeHandlerImpl();
+            await earthquake.GetEarthquakrMsgs();
+            this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
+            this.EarthquakeTempPanel.Visibility = Visibility.Visible;
             List<EarthquakeMsg> list = earthquake.EarthquakeMsgs;
-            GraphicsLayer graphicsLayer=new GraphicsLayer();
+            GraphicsLayer graphicsLayer = new GraphicsLayer();
             graphicsLayer.DisplayName = "地震信息点";
             graphicsLayer.ID = "earthquake";
             for (int i = 0; i < list.Count; i++)
@@ -88,8 +88,8 @@ namespace FWS
             }
             this.MyMapView.Map.Layers.Add(graphicsLayer);
         }
-        
-      
+
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //时间定时器 实时更新
@@ -108,20 +108,22 @@ namespace FWS
 
         private void WeatherMsgBtns_Click(object sender, RoutedEventArgs e)
         {
-            bool isExist= WindowFormUtility.CheckFormIsExist("FWS.CitySelectWindow");
+            bool isExist = WindowFormUtility.CheckFormIsExist("FWS.CitySelectWindow");
             if (!isExist)
             {
-                CitySelectWindow citySelectWindow=new CitySelectWindow(this);
+                CitySelectWindow citySelectWindow = new CitySelectWindow(this);
                 citySelectWindow.Show();
             }
         }
+
         private void InqueryMsgBtns_Click(object sender, RoutedEventArgs e)
         {
             //ShowWeather(6418, "南充");
         }
+
         private void CloseTempBtn_Click(object sender, RoutedEventArgs e)
         {
-            Button button=sender as Button;
+            Button button = sender as Button;
             switch (button.Tag.ToString())
             {
                 case "Weather":
@@ -149,17 +151,21 @@ namespace FWS
             Color color = Color.FromRgb(236, 238, 165);
             Color color2 = Color.FromRgb(255, 255, 255);
             Button btn = sender as Button;
-            if (btn.Tag.ToString().Contains("forecast"))//如果点击的是天气预报
+            if (btn.Tag.ToString().Contains("forecast")) //如果点击的是天气预报
             {
-                (this.TagBtn_forecast.Template.FindName("TagBtnBorder", this.TagBtn_forecast) as Border).Background = new SolidColorBrush(color);
-                (this.TagBtn_detail.Template.FindName("TagBtnBorder2", this.TagBtn_detail) as Border).Background = new SolidColorBrush(color2);
+                (this.TagBtn_forecast.Template.FindName("TagBtnBorder", this.TagBtn_forecast) as Border).Background =
+                    new SolidColorBrush(color);
+                (this.TagBtn_detail.Template.FindName("TagBtnBorder2", this.TagBtn_detail) as Border).Background =
+                    new SolidColorBrush(color2);
                 this.WeatherForecastPanel.Visibility = Visibility.Visible;
                 this.WeatherDetailPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
-                (this.TagBtn_forecast.Template.FindName("TagBtnBorder", this.TagBtn_forecast) as Border).Background = new SolidColorBrush(color2);
-                (this.TagBtn_detail.Template.FindName("TagBtnBorder2", this.TagBtn_detail) as Border).Background = new SolidColorBrush(color);
+                (this.TagBtn_forecast.Template.FindName("TagBtnBorder", this.TagBtn_forecast) as Border).Background =
+                    new SolidColorBrush(color2);
+                (this.TagBtn_detail.Template.FindName("TagBtnBorder2", this.TagBtn_detail) as Border).Background =
+                    new SolidColorBrush(color);
                 this.WeatherDetailPanel.Visibility = Visibility.Visible;
                 this.WeatherForecastPanel.Visibility = Visibility.Collapsed;
             }
@@ -183,16 +189,18 @@ namespace FWS
         /// <param name="id">城市ID</param>
         /// <param name="name">城市名字</param>
         /// <returns></returns>
-        private  async Task GetWeatherByCity(int id, string name, string urlcode)
+        private async Task GetWeatherByCity(int id, string name, string urlcode)
         {
-            weatherDictionary=null;//先初始化为空。
+            weatherDictionary = null; //先初始化为空。
             IWeatherHandler weatherHandler = new WeatherHandlerImpl();
             await weatherHandler.GetWeatherByUrl(urlcode);
             List<IWeatherMsg> list = weatherHandler.WeatherMsgs;
-            Dictionary<string,object> dic=new Dictionary<string, object>();
-            List<WeatherItem> weatherLists=new List<WeatherItem>();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            List<WeatherItem> weatherLists = new List<WeatherItem>();
             WeatherItem weatherItem = new WeatherItem();
+
             #region 读取数据库
+
             /*
             string sql = "select * from DayRainInfo where AreaID=" + id;
             DataSet ds = db.ReturnDataSet(sql);
@@ -245,21 +253,22 @@ namespace FWS
             }
             dic.Add("weatherItem", weatherLists);
              */
+
             #endregion
 
             if (list.Count == 0)
             {
                 MessageBox.Show("暂无天气数据");
-                return ;
+                return;
             }
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].flag == 2)//每天的数据
+                if (list[i].flag == 2) //每天的数据
                 {
                     WeatherDayMsg dayMsg = list[i] as WeatherDayMsg;
-                    if (dayMsg.time==DateTime.Today)//今天的数据
+                    if (dayMsg.time == DateTime.Today) //今天的数据
                     {
-                        if (string.IsNullOrEmpty(dayMsg.maxTemp))//如果只有半天数据
+                        if (string.IsNullOrEmpty(dayMsg.maxTemp)) //如果只有半天数据
                         {
                             OnlyDayWeatherInfo od = new OnlyDayWeatherInfo();
                             od.city = name;
@@ -281,7 +290,8 @@ namespace FWS
                             dn.weatherStatus_day = dayMsg.weatherStatus.Split('转')[0].Trim();
                             dn.weatherStatus_night = dayMsg.weatherStatus.Split('转')[1].Trim();
                             dn.imgSrc_day = "Images/day/日间" + GetWeatherImgSrcByWeatherStatus(dn.weatherStatus_day);
-                            dn.imgSrc_night = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(dn.weatherStatus_night);
+                            dn.imgSrc_night = "Images/night/晚间" +
+                                              GetWeatherImgSrcByWeatherStatus(dn.weatherStatus_night);
                             dn.maxTemperature = dayMsg.maxTemp;
                             dn.minTemperature = dayMsg.minTemp;
                             dn.wind_day = dayMsg.wind.Split('转')[0].Trim();
@@ -291,7 +301,7 @@ namespace FWS
                             dic.Add("dayandnight", dn);
                         }
                     }
-                    else//之后7几天的数据
+                    else //之后7几天的数据
                     {
                         weatherItem = new WeatherItem();
                         weatherItem.areaID = id;
@@ -309,7 +319,7 @@ namespace FWS
             weatherDictionary = dic;
         }
 
-        public async Task ShowWeather(int id,string name,string urlcode)
+        public async Task ShowWeather(int id, string name, string urlcode)
         {
             try
             {
@@ -346,7 +356,7 @@ namespace FWS
             catch (Exception)
             {
             }
-            
+
         }
 
         /// <summary>
@@ -355,9 +365,10 @@ namespace FWS
         /// <param name="areaID"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        private async Task RendererCharts(int areaID,string date)
+        private async Task RendererCharts(int areaID, string date)
         {
-            string sql = String.Format("select * from HoursRainInfo where AreaID={0} and day=#{1}#", areaID, DateTime.Parse(date));
+            string sql = String.Format("select * from HoursRainInfo where AreaID={0} and day=#{1}#", areaID,
+                DateTime.Parse(date));
             DataTable dt = db.ReturnDataSet(sql).Tables[0];
             string Charttitle = date + "天气详情";
             List<DateTime> LsTime = new List<DateTime>();
@@ -370,6 +381,7 @@ namespace FWS
             Simon.Children.Clear();
             CreateChartSpline(Charttitle, LsTime, temperatures);
         }
+
         /// <summary>
         /// 根据天气状况名字返回对应的图片地址
         /// </summary>
@@ -405,7 +417,7 @@ namespace FWS
                     result = "阴.png";
                     break;
                 default:
-                     result = "晴.png";
+                    result = "晴.png";
                     break;
             }
             return result;
@@ -419,10 +431,10 @@ namespace FWS
         private void WeatherForecastListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             WeatherItem weatherItem = this.WeatherForecastListView.SelectedItem as WeatherItem;
-            if (weatherItem==null)
+            if (weatherItem == null)
             {
                 MessageBox.Show("点击的天气暂无信息。");
-                return; 
+                return;
             }
             RendererCharts(weatherItem.areaID, weatherItem.date);
             TagBtn_Click(this.TagBtn_detail, null);
@@ -461,6 +473,7 @@ namespace FWS
         }
 
         #region 折线图
+
         public void CreateChartSpline(string Charttitle, List<DateTime> lsTime, List<string> temperatures)
         {
             //创建一个图标
@@ -473,8 +486,8 @@ namespace FWS
             chart.ToolBarEnabled = true;
 
             //设置图标的属性
-            chart.ScrollingEnabled = false;//是否启用或禁用滚动
-            chart.View3D = true;//3D效果显示
+            chart.ScrollingEnabled = false; //是否启用或禁用滚动
+            chart.View3D = true; //3D效果显示
 
             //创建一个标题的对象
             Title title = new Title();
@@ -510,7 +523,7 @@ namespace FWS
             // 设置数据线的格式。               
             dataSeries.LegendText = "温度";
 
-            dataSeries.RenderAs = RenderAs.Spline;//折线图
+            dataSeries.RenderAs = RenderAs.Spline; //折线图
 
             dataSeries.XValueType = ChartValueTypes.DateTime;
             // 设置数据点              
@@ -534,23 +547,27 @@ namespace FWS
 
             // 添加数据线到数据序列。                
             chart.Series.Add(dataSeries);
-            
+
             //将生产的图表增加到Grid，然后通过Grid添加到上层Grid.           
             Grid gr = new Grid();
             gr.Children.Add(chart);
 
             Simon.Children.Add(gr);
         }
+
         #endregion
 
         #region 点击事件
+
         //点击事件
-        void dataPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void dataPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //DataPoint dp = sender as DataPoint;
             //MessageBox.Show(dp.YValue.ToString());
         }
+
         #endregion
+
         #region 添加数据到地图
 
         private async void AddLayerDataBtn_OnClick(object sender, RoutedEventArgs e)
@@ -582,7 +599,7 @@ namespace FWS
                     var dynLayer =
                         await MapHandler.AddFileDatasetToDynamicMapServiceLayer(type,
                             System.IO.Path.GetDirectoryName(openFileDialog.FileName),
-                            new List<string>(openFileDialog.SafeFileNames),this.MyMapView.Map.Layers.Count);
+                            new List<string>(openFileDialog.SafeFileNames), this.MyMapView.Map.Layers.Count);
                     // Add the dynamic map service layer to the map
                     if (dynLayer != null)
                     {
@@ -598,6 +615,16 @@ namespace FWS
             }
         }
 
+        private async void ZoomInBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+        }
+        private async void ZoomOutBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+        }
+        private async void PanBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+        }
+
         private async Task LoadShapefile(string path)
         {
             try
@@ -607,7 +634,7 @@ namespace FWS
                 // clear existing map and spatial reference
                 if (MyMapView.Map.Layers.Any())
                 {
-                   // MyMapView.Map.Layers.Clear();
+                    // MyMapView.Map.Layers.Clear();
                     MyMapView.Map = new Map();
                 }
                 // create feature layer based on the shapefile
@@ -625,15 +652,17 @@ namespace FWS
                 MessageBox.Show("Error creating feature layer: " + ex.Message, "Sample Error");
             }
         }
+
         #endregion
 
         #region 地图缩略图
+
         public async void OverviewMap_LayerLoaded(object sender, LayerLoadedEventArgs e)
         {
             await AddSingleGraphicAsync();
         }
 
-       
+
         public async void MyMapView_ExtentChanged(object sender, System.EventArgs e)
         {
             var graphicsOverlay = overviewMap.GraphicsOverlays["overviewOverlay"];
@@ -648,8 +677,9 @@ namespace FWS
             var viewpointExtent = currentViewpoint.TargetGeometry.Extent;
             g.Geometry = viewpointExtent;
 
-            await overviewMap.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 15);
+            await overviewMap.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale*15);
         }
+
         private async Task AddSingleGraphicAsync()
         {
             try
@@ -675,7 +705,8 @@ namespace FWS
                 // Ignore cancellations from selecting new shape type
             }
             catch (Exception ex)
-            { }
+            {
+            }
         }
 
 
@@ -683,9 +714,11 @@ namespace FWS
         {
 
         }
+
         #endregion
 
         #region 用TreeView+属性改变事件  效率不好
+
         /*
         private static int m_LayerCount = 0;
         private void MyMapView_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -715,6 +748,7 @@ namespace FWS
                 MyTreeView.ItemsSourceData = list;
         }
         */
+
         #endregion
 
 
@@ -728,7 +762,7 @@ namespace FWS
             if (LayersListView.SelectedItem != null)
             {
                 string id = (LayersListView.SelectedItem as Layer).ID.ToString();
-                MyMapView.SetView(MyMapView.Map.Layers[id].FullExtent.GetCenter(),5000);
+                MyMapView.SetView(MyMapView.Map.Layers[id].FullExtent.GetCenter(), 5000);
             }
         }
 
@@ -746,6 +780,7 @@ namespace FWS
             }
         }
 
+       
 
     }
 }

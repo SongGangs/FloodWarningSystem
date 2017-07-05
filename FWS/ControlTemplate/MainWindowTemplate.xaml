@@ -58,4 +58,17 @@
             </Label>
         </Border>
     </ControlTemplate>
+
+    <ControlTemplate x:Key="ZoomInBtn" TargetType="Button">
+        <Image Source="../Images/ZoomInTool_B_32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
+    </ControlTemplate>
+    <ControlTemplate x:Key="ZoomOutBtn" TargetType="Button">
+        <Image Source="../Images/ZoomOutTool_B_32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
+    </ControlTemplate>
+    <ControlTemplate x:Key="PanBtn" TargetType="Button">
+        <Image Source="../Images/PanTool_B_32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
+    </ControlTemplate>
+    <ControlTemplate x:Key="AddLayerDataBtn" TargetType="Button">
+        <Image Source="../Images/AddContent32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
+    </ControlTemplate>
 </ResourceDictionary>
