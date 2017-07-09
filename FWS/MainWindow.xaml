@@ -91,7 +91,7 @@
                 </ListView>
             </StackPanel>
         </Border>
-        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}"  >
+        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" MapViewTapped="MyMapView_OnMapViewTapped"   >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ExtentChanged">
                     <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="MyMapView_ExtentChanged"/>
@@ -102,6 +102,42 @@
                     ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
             </esri:Map>
         </esri:MapView>
+        <Border  Visibility="Collapsed" Name="earthquakeMsgDetailBorder" Grid.Column="1" Grid.Row="2" Width="250" Height="300" Background="#CC000000" BorderThickness="1,1,1,0"  BorderBrush="White" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <StackPanel Margin="20">
+                <Button Template="{StaticResource CloseTempBtnTemplate}" 
+                            Tag="earthquakeMsgDetail"
+                            Click="CloseTempBtn_Click" Foreground="White">
+                </Button>
+                <StackPanel Orientation="Horizontal" Margin="0,10 " HorizontalAlignment="Center">
+                    <TextBlock Text="地震详细信息" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <TextBlock Text="地震位置：" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding position}" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <TextBlock Text="   经纬度：(" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding longitude}" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="°," FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding latitude}" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="°)" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <TextBlock Text="发生时间：" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding time}" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <TextBlock Text="地震等级：" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding level}" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="（里氏）" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <TextBlock Text="地震深度：" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding depth}" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="（千米）" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
         <Border Grid.Column="1" Grid.Row="2" Background="White" BorderBrush="Black" BorderThickness="1"
 			HorizontalAlignment="Right" VerticalAlignment="Bottom"
 			Margin="10" Padding="5">
@@ -263,5 +299,6 @@
                 </StackPanel>
             </Grid>
         </Border>
+        
     </Grid>
 </Window>

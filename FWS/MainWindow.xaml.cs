@@ -38,6 +38,8 @@ namespace FWS
     {
         private static AccessDataBase db = new AccessDataBase(); //数据库操作帮助类
         private static Dictionary<string, object> weatherDictionary; //获取天气展示类别的信息  字典
+        private static IEarthquakeHandler earthquake = new EarthquakeHandlerImpl();
+        private static IWeatherHandler weatherHandler = new WeatherHandlerImpl();
 
         public MainWindow()
         {
@@ -68,7 +70,7 @@ namespace FWS
         /// <param name="e"></param>
         private async void EarthquakeMsgBtns_Click(object sender, RoutedEventArgs e)
         {
-            IEarthquakeHandler earthquake = new EarthquakeHandlerImpl();
+            
             await earthquake.GetEarthquakrMsgs();
             this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
             this.EarthquakeTempPanel.Visibility = Visibility.Visible;
@@ -132,6 +134,9 @@ namespace FWS
                 case "Earthquake":
                     this.EarthquakeTempPanel.Visibility = Visibility.Collapsed;
                     break;
+                case "earthquakeMsgDetail":
+                    this.earthquakeMsgDetailBorder.Visibility=Visibility.Collapsed;
+                    break;
             }
         }
 
@@ -178,7 +183,7 @@ namespace FWS
         /// <param name="list"></param>
         private async Task SaveWeatherMsgAsync(string name)
         {
-            IWeatherHandler weatherHandler = new WeatherHandlerImpl();
+           
             await weatherHandler.DeleteWeatherMsg(name);
             await weatherHandler.SaveWeatherMsg(weatherHandler.WeatherMsgs, name);
         }
@@ -192,7 +197,6 @@ namespace FWS
         private async Task GetWeatherByCity(int id, string name, string urlcode)
         {
             weatherDictionary = null; //先初始化为空。
-            IWeatherHandler weatherHandler = new WeatherHandlerImpl();
             await weatherHandler.GetWeatherByUrl(urlcode);
             List<IWeatherMsg> list = weatherHandler.WeatherMsgs;
             Dictionary<string, object> dic = new Dictionary<string, object>();
@@ -780,7 +784,26 @@ namespace FWS
             }
         }
 
-       
 
+
+        private void MyMapView_OnMapViewTapped(object sender, MapViewInputEventArgs e)
+        {
+            List<EarthquakeMsg> list = earthquake.EarthquakeMsgs;
+            if (list==null)
+                return;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var normalizedPoint = GeometryEngine.NormalizeCentralMeridian(e.Location);
+                var projectedCenter = GeometryEngine.Project(normalizedPoint, SpatialReferences.Wgs84) as MapPoint;
+                float.Parse(projectedCenter.X.ToString("0.00"));
+                if (float.Parse(projectedCenter.X.ToString("0.00"))== list[i].longitude && float.Parse(projectedCenter.Y.ToString("0.00")) == list[i].latitude)
+                {
+                    this.earthquakeMsgDetailBorder.Margin = new Thickness(e.Position.X - this.earthquakeMsgDetailBorder.ActualWidth, e.Position.Y - this.earthquakeMsgDetailBorder.ActualWidth*0.5, 0, 0);
+                    this.earthquakeMsgDetailBorder.Visibility=Visibility.Visible;
+                    this.earthquakeMsgDetailBorder.DataContext = list[i];
+                }
+            }
+             
+        }
     }
 }
