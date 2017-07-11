@@ -451,6 +451,8 @@ namespace FWS
         /// <param name="e"></param>
         private async void EarthquakeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (earthquakeMsgDetailBorder.Visibility == Visibility.Visible)
+                earthquakeMsgDetailBorder.Visibility = Visibility.Collapsed;
             EarthquakeMsg msg = this.EarthquakeListView.SelectedItem as EarthquakeMsg;
             if (msg == null)
             {
@@ -798,7 +800,11 @@ namespace FWS
                 float.Parse(projectedCenter.X.ToString("0.00"));
                 if (float.Parse(projectedCenter.X.ToString("0.00"))== list[i].longitude && float.Parse(projectedCenter.Y.ToString("0.00")) == list[i].latitude)
                 {
-                    this.earthquakeMsgDetailBorder.Margin = new Thickness(e.Position.X - this.earthquakeMsgDetailBorder.ActualWidth, e.Position.Y - this.earthquakeMsgDetailBorder.ActualWidth*0.5, 0, 0);
+                    double margin_left = e.Position.X - this.earthquakeMsgDetailBorder.ActualWidth;
+                    double margin_top = e.Position.Y - this.earthquakeMsgDetailBorder.ActualHeight * 0.5;
+                    double margin_right = this.MyMapView.ActualWidth - margin_left - this.earthquakeMsgDetailBorder.ActualWidth;
+                    double margin_bottom = this.MyMapView.ActualHeight - margin_top - this.earthquakeMsgDetailBorder.ActualHeight;
+                    this.earthquakeMsgDetailBorder.Margin = new Thickness(margin_left, margin_top, margin_right, margin_bottom);
                     this.earthquakeMsgDetailBorder.Visibility=Visibility.Visible;
                     this.earthquakeMsgDetailBorder.DataContext = list[i];
                 }
