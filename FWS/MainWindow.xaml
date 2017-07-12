@@ -13,6 +13,12 @@
                 <esri:SimpleLineSymbol Color="Red" Width="2" />
             </esri:SimpleFillSymbol.Outline>
         </esri:SimpleFillSymbol>
+
+        <esri:SimpleFillSymbol x:Key="OutlineSymbol" Color="#00FFFFFF">
+            <esri:SimpleFillSymbol.Outline>
+                <esri:SimpleLineSymbol Color="Red" Width="1" />
+            </esri:SimpleFillSymbol.Outline>
+        </esri:SimpleFillSymbol>
         <DataTemplate x:Key="LayerList">
             <Border Name="border" BorderBrush="#FFC1C4C4"  Margin="3">
                 <StackPanel Orientation="Horizontal">
@@ -72,9 +78,13 @@
                     Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="平移"
                     Click="PanBtn_OnClick" >
             </Button>
+            <Button Template="{StaticResource FullExtent}" Name="FullExtentBtn" Width="24"
+                    Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="全图"
+                    Click="FullExtentBtn_OnClick" Margin="10,0">
+            </Button>
             <Button Template="{StaticResource AddLayerDataBtn}" Name="AddLayerDataBtn" Width="24"
                     Height="{Binding ActualHeight, ElementName=ToolBar, Mode=OneWay}" ToolTip="添加数据"
-                    Click="AddLayerDataBtn_OnClick" Margin="10,0">
+                    Click="AddLayerDataBtn_OnClick" >
             </Button>
         </ToolBar>
 
@@ -91,14 +101,18 @@
                 </ListView>
             </StackPanel>
         </Border>
-        <esri:MapView  Name="MyMapView" Grid.Column="1" Grid.Row="2" Style="{StaticResource Map}" MapViewTapped="MyMapView_OnMapViewTapped"   >
+        <esri:MapView  Name="MyMapView" Grid.Column="1"  Grid.Row="2" Style="{StaticResource Map}" MapViewTapped="MyMapView_OnMapViewTapped"   >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ExtentChanged">
                     <ei:CallMethodAction TargetObject="{Binding Mode=OneWay}" MethodName="MyMapView_ExtentChanged"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <esri:Map x:Name="map">
-                <esri:ArcGISTiledMapServiceLayer ID="World" DisplayName="World Topo Map" 
+            <esri:MapView.GraphicsOverlays>
+                <esri:GraphicsOverlay ID="overviewOverlay">
+                </esri:GraphicsOverlay>
+            </esri:MapView.GraphicsOverlays>
+            <esri:Map x:Name="map" >
+                <esri:ArcGISTiledMapServiceLayer  ID="World" DisplayName="World Topo Map" 
                     ServiceUri="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" />
             </esri:Map>
         </esri:MapView>
@@ -152,15 +166,6 @@
                 </i:Interaction.Triggers>
                 <esri:MapView.GraphicsOverlays>
                     <esri:GraphicsOverlay ID="overviewOverlay">
-                        <esri:GraphicsOverlay.Renderer>
-                            <esri:SimpleRenderer>
-                                <esri:SimpleFillSymbol Color="#22FF0000">
-                                    <esri:SimpleFillSymbol.Outline>
-                                        <esri:SimpleLineSymbol Color="Red" Width="2" />
-                                    </esri:SimpleFillSymbol.Outline>
-                                </esri:SimpleFillSymbol>
-                            </esri:SimpleRenderer>
-                        </esri:GraphicsOverlay.Renderer>
                     </esri:GraphicsOverlay>
                 </esri:MapView.GraphicsOverlays>
                 <!--<esri:Map Layers="{Binding ElementName=map, Mode=OneWay}" />-->

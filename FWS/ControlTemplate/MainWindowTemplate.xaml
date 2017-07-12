@@ -68,6 +68,9 @@
     <ControlTemplate x:Key="PanBtn" TargetType="Button">
         <Image Source="../Images/PanTool_B_32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
     </ControlTemplate>
+    <ControlTemplate x:Key="FullExtent" TargetType="Button">
+        <Image Source="/FWS;component/Images/ZoomFullExtent32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
+    </ControlTemplate>
     <ControlTemplate x:Key="AddLayerDataBtn" TargetType="Button">
         <Image Source="../Images/AddContent32.png" Width="Auto" Margin="0,2" Cursor="Hand"></Image>
     </ControlTemplate>

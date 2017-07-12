@@ -623,12 +623,20 @@ namespace FWS
 
         private async void ZoomInBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            await ChangeMainMapSacleAsync(1);
         }
         private async void ZoomOutBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            await ChangeMainMapSacleAsync(2);
         }
         private async void PanBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            this.MyMapView.Cursor = Cursors.Hand;
+        }
+        private async void FullExtentBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.MyMapView.Cursor = Cursors.Arrow;
+            menuZoomIn_Click(null, null);
         }
 
         private async Task LoadShapefile(string path)
@@ -715,6 +723,46 @@ namespace FWS
             }
         }
 
+        /// <summary>
+        /// 改变主视图的范围  放大缩小
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private async Task ChangeMainMapSacleAsync(int type)
+        {
+            try
+            {
+                await MyMapView.LayersLoadedAsync();
+                var graphicsOverlay = MyMapView.GraphicsOverlays["overviewOverlay"];
+                Symbol symbol = symbol = Resources["OutlineSymbol"] as Symbol;
+                while (true)
+                {
+                    var geometry = await MyMapView.Editor.RequestShapeAsync(DrawShape.Rectangle, symbol);
+                    graphicsOverlay.Graphics.Clear();
+
+                    var graphic = new Graphic(geometry, symbol);
+                    graphicsOverlay.Graphics.Add(graphic);
+
+                    var viewpointExtent = geometry.Extent;
+                    if (type==1)
+                    {
+                        await MyMapView.SetViewAsync(viewpointExtent);
+                    }
+                    else
+                    {
+                        await MyMapView.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 5);
+                    }
+                    graphicsOverlay.Graphics.Clear();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Ignore cancellations from selecting new shape type
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
         private void overviewMap_LayerLoaded_1(object sender, LayerLoadedEventArgs e)
         {
