@@ -621,12 +621,22 @@ namespace FWS
             }
         }
 
+        /// <summary>
+        /// 放大
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ZoomInBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            Cursor cur = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory).Replace("bin\\Debug\\", "Images\\ZoomIn.cur"));
+            this.MyMapView.Cursor = cur;
             await ChangeMainMapSacleAsync(1);
+
         }
         private async void ZoomOutBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            Cursor cur = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory).Replace("bin\\Debug\\", "Images\\ZoomOut.cur"));
+            this.MyMapView.Cursor = cur;
             await ChangeMainMapSacleAsync(2);
         }
         private async void PanBtn_OnClick(object sender, RoutedEventArgs e)
@@ -750,7 +760,7 @@ namespace FWS
                     }
                     else
                     {
-                        await MyMapView.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 5);
+                        await MyMapView.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 2);
                     }
                     graphicsOverlay.Graphics.Clear();
                 }
