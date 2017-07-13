@@ -52,6 +52,7 @@ namespace FWS
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("功能暂未开放！请关注后续更新");
             /* 
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
            List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
