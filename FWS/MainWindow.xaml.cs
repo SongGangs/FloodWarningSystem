@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Layers;
 using Esri.ArcGISRuntime.LocalServices;
 using Esri.ArcGISRuntime.Symbology;
+using Esri.ArcGISRuntime.Tasks.Geoprocessing;
 using FWS.EarthquakeHelper;
 using FWS.MapHelper;
 using FWS.temp;
@@ -50,7 +52,6 @@ namespace FWS
 
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
-
             /* 
            IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
            List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
@@ -73,6 +74,7 @@ namespace FWS
             
             await earthquake.GetEarthquakrMsgs();
             this.EarthquakeListView.ItemsSource = earthquake.EarthquakeMsgs;
+            EarthquakeTempPanel.Tag = 2;
             this.EarthquakeTempPanel.Visibility = Visibility.Visible;
             List<EarthquakeMsg> list = earthquake.EarthquakeMsgs;
             GraphicsLayer graphicsLayer = new GraphicsLayer();
@@ -129,10 +131,16 @@ namespace FWS
             switch (button.Tag.ToString())
             {
                 case "Weather":
+                    if (EarthquakeTempPanel.Tag.Equals(2))
+                    {
+                        EarthquakeTempPanel.Visibility = Visibility.Visible;
+                    }
                     this.WeatherTempPanel.Visibility = Visibility.Collapsed;
+
                     break;
                 case "Earthquake":
                     this.EarthquakeTempPanel.Visibility = Visibility.Collapsed;
+                    EarthquakeTempPanel.Tag = 1;
                     break;
                 case "earthquakeMsgDetail":
                     this.earthquakeMsgDetailBorder.Visibility=Visibility.Collapsed;
@@ -140,11 +148,7 @@ namespace FWS
             }
         }
 
-        public void ShowWeatherTempPanel()
-        {
-            this.WeatherTempPanel.Visibility = Visibility.Visible;
-        }
-
+       
 
         /// <summary>
         /// 天气预报、天气详情切换按钮
@@ -183,7 +187,6 @@ namespace FWS
         /// <param name="list"></param>
         private async Task SaveWeatherMsgAsync(string name)
         {
-           
             await weatherHandler.DeleteWeatherMsg(name);
             await weatherHandler.SaveWeatherMsg(weatherHandler.WeatherMsgs, name);
         }
@@ -352,7 +355,7 @@ namespace FWS
                     this.onlynightPanel_detail.Visibility = Visibility.Collapsed;
                     this.WeatherDetailPanel.DataContext = dic["dayandnight"] as DayAndNightWeatherInfo;
                 }
-                //await SaveWeatherMsgAsync(name);
+                await SaveWeatherMsgAsync(name);
 
                 //图表渲染
                 await RendererCharts(id, DateTime.Parse(this.NowTime.Content.ToString()).ToString("MM月dd日"));
@@ -633,20 +636,34 @@ namespace FWS
             await ChangeMainMapSacleAsync(1);
 
         }
+
         private async void ZoomOutBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            Cursor cur = new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory).Replace("bin\\Debug\\", "Images\\ZoomOut.cur"));
+            if (sender == null)
+                return;
+            Cursor cur =
+                new Cursor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory)
+                    .Replace("bin\\Debug\\", "Images\\ZoomOut.cur"));
             this.MyMapView.Cursor = cur;
             await ChangeMainMapSacleAsync(2);
         }
+
         private async void PanBtn_OnClick(object sender, RoutedEventArgs e)
         {
+            MyMapView.Editor.Cancel.Execute(null);
             this.MyMapView.Cursor = Cursors.Hand;
+            //ZoomOutBtn_OnClick(null, null);
+            
         }
+
         private async void FullExtentBtn_OnClick(object sender, RoutedEventArgs e)
         {
             this.MyMapView.Cursor = Cursors.Arrow;
-            menuZoomIn_Click(null, null);
+            await ChangeMainMapSacleAsync(0);
+            if (MyMapView.Map.Layers.Count<0)
+              return;
+            MyMapView.SetView(MyMapView.Map.Layers[0].FullExtent);
+            //menuZoomIn_Click(null, null);
         }
 
         private async Task LoadShapefile(string path)
@@ -758,7 +775,7 @@ namespace FWS
                     {
                         await MyMapView.SetViewAsync(viewpointExtent);
                     }
-                    else
+                    else if(type==2)
                     {
                         await MyMapView.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale * 2);
                     }
@@ -826,7 +843,7 @@ namespace FWS
             if (LayersListView.SelectedItem != null)
             {
                 string id = (LayersListView.SelectedItem as Layer).ID.ToString();
-                MyMapView.SetView(MyMapView.Map.Layers[id].FullExtent.GetCenter(), 5000);
+                MyMapView.SetView(MyMapView.Map.Layers[id].FullExtent);
             }
         }
 
@@ -865,6 +882,7 @@ namespace FWS
                     this.earthquakeMsgDetailBorder.Margin = new Thickness(margin_left, margin_top, margin_right, margin_bottom);
                     this.earthquakeMsgDetailBorder.Visibility=Visibility.Visible;
                     this.earthquakeMsgDetailBorder.DataContext = list[i];
+                    return;
                 }
             }
              

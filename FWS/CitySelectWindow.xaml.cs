@@ -97,6 +97,10 @@ namespace FWS
             }
             string urlcode = this.ProvinceComboBox.SelectedValue.ToString() + "/" +
                              this.AreaComboBox.SelectedValue.ToString() + ".html";
+            if (m_MainWindow.EarthquakeTempPanel.Tag.Equals(2))
+            {
+                m_MainWindow.EarthquakeTempPanel.Visibility=Visibility.Collapsed;
+            }
             m_MainWindow.WeatherTempPanel.Visibility=Visibility.Visible;
             EnArea area = this.AreaComboBox.SelectedItem as EnArea;
             await m_MainWindow.ShowWeather(area.ID, area.AreaName, urlcode);

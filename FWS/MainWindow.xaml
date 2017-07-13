@@ -282,7 +282,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Border Grid.Column="1" Grid.Row="2" Name="EarthquakeTempPanel" Style="{StaticResource TempBoder}">
+        <Border Grid.Column="1" Grid.Row="2" Name="EarthquakeTempPanel"  Style="{StaticResource TempBoder}" Panel.ZIndex="1">
             <Grid>
                 <StackPanel Margin="0,5,0,0" VerticalAlignment="Top">
                     <Button Template="{StaticResource CloseTempBtnTemplate}" Tag="Earthquake"
