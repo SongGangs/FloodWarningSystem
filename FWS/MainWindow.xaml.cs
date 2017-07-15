@@ -50,16 +50,6 @@ namespace FWS
         private void MsgBtns_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("功能暂未开放！请关注后续更新");
-            /* 
-           IEarthquakeHandler earthquakeObj=new EarthquakeHandlerImpl();
-           List<EarthquakeMsg>list= earthquakeObj.GetEarthquakrMsgs();
-           earthquakeObj.DeleteEarthquakrMsgs();
-           earthquakeObj.SaveEarthquakrMsgs(list);
-            
-            IWeatherHandler weatherObj=new WeatherHandlerImpl();
-            List<IWeatherMsg> list = weatherObj.GetWeatherByName("南充");
-            weatherObj.DeleteWeatherMsg("南充");
-            weatherObj.SaveWeatherMsg(list,"南充");*/
         }
 
         /// <summary>
@@ -118,11 +108,11 @@ namespace FWS
             }
         }
 
-        private void InqueryMsgBtns_Click(object sender, RoutedEventArgs e)
-        {
-            //ShowWeather(6418, "南充");
-        }
-
+        /// <summary>
+        /// 关闭弹出的显示框
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CloseTempBtn_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -203,64 +193,6 @@ namespace FWS
             Dictionary<string, object> dic = new Dictionary<string, object>();
             List<WeatherItem> weatherLists = new List<WeatherItem>();
             WeatherItem weatherItem = new WeatherItem();
-
-            #region 读取数据库
-
-            /*
-            string sql = "select * from DayRainInfo where AreaID=" + id;
-            DataSet ds = db.ReturnDataSet(sql);
-            DataTable dt = ds.Tables[0];
-            if (dt.Rows.Count == 0)
-            {
-                MessageBox.Show("暂无天气数据");
-                return null;
-            }
-            
-            if (string.IsNullOrEmpty(dt.Rows[0]["maxTemp"].ToString()))
-            {
-                OnlyDayWeatherInfo od = new OnlyDayWeatherInfo();
-                od.city = name;
-                od.date = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("MM月dd日");
-                od.week = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("dddd");
-                od.imgSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                od.temperature = dt.Rows[0]["minTemp"].ToString();
-                od.wind = dt.Rows[0]["wind"].ToString().Trim();
-                od.windL = dt.Rows[0]["windL"].ToString().Trim();
-                dic.Add("onlyday", od);
-            }
-            else
-            {
-                DayAndNightWeatherInfo dn = new DayAndNightWeatherInfo();
-                dn.city = name;
-                dn.date = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("MM月dd日");
-                dn.week = DateTime.Parse(dt.Rows[0]["time"].ToString()).ToString("dddd");
-                dn.imgSrc_day="Images/day/日间"+ GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                dn.imgSrc_night="Images/night/夜间"+ GetWeatherImgSrcByWeatherStatus(dt.Rows[0]["weatherStatus"].ToString().Split('转')[0].Trim());
-                dn.maxTemperature = dt.Rows[0]["maxTemp"].ToString();
-                dn.minTemperature = dt.Rows[0]["minTemp"].ToString();
-                dn.wind_day = dt.Rows[0]["wind"].ToString().Split('转')[0].Trim();
-                dn.wind_night = dt.Rows[0]["wind"].ToString().Split('转')[1].Trim();
-                dn.windL_day = dt.Rows[0]["windL"].ToString().Split('转')[0].Trim();
-                dn.windL_night = dt.Rows[0]["windL"].ToString().Split('转')[1].Trim();
-                dic.Add("dayandnight",dn);
-            }
-            for (int i = 1; i < dt.Rows.Count; i++)
-            {
-                weatherItem = new WeatherItem();
-                weatherItem.areaID = id;
-                weatherItem.date = DateTime.Parse(dt.Rows[i]["time"].ToString()).ToString("MM月dd日");
-                weatherItem.maxTemperature = dt.Rows[i]["maxTemp"].ToString();
-                weatherItem.minTemperature = dt.Rows[i]["minTemp"].ToString();
-                string weatherStatus = dt.Rows[i]["weatherStatus"].ToString().Split('转')[0].Trim();
-                weatherItem.weatherStatus = weatherStatus;
-                weatherItem.imageSrc = "Images/night/晚间" + GetWeatherImgSrcByWeatherStatus(weatherStatus);
-                weatherLists.Add(weatherItem);
-            }
-            dic.Add("weatherItem", weatherLists);
-             */
-
-            #endregion
-
             if (list.Count == 0)
             {
                 MessageBox.Show("暂无天气数据");
@@ -324,6 +256,13 @@ namespace FWS
             weatherDictionary = dic;
         }
 
+        /// <summary>
+        /// 显示天气信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="urlcode"></param>
+        /// <returns></returns>
         public async Task ShowWeather(int id, string name, string urlcode)
         {
             try
@@ -569,14 +508,18 @@ namespace FWS
         //点击事件
         private void dataPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //DataPoint dp = sender as DataPoint;
-            //MessageBox.Show(dp.YValue.ToString());
+            
         }
 
         #endregion
 
         #region 添加数据到地图
 
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void AddLayerDataBtn_OnClick(object sender, RoutedEventArgs e)
         {
             try
@@ -635,6 +578,11 @@ namespace FWS
 
         }
 
+        /// <summary>
+        /// 缩小
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ZoomOutBtn_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender == null)
@@ -646,50 +594,42 @@ namespace FWS
             await ChangeMainMapSacleAsync(2);
         }
 
-        private async void PanBtn_OnClick(object sender, RoutedEventArgs e)
-        {
-            MyMapView.Editor.Cancel.Execute(null);
-            this.MyMapView.Cursor = Cursors.Hand;
-            //ZoomOutBtn_OnClick(null, null);
-            
-        }
-
-        private async void FullExtentBtn_OnClick(object sender, RoutedEventArgs e)
-        {
-            this.MyMapView.Cursor = Cursors.Arrow;
-            await ChangeMainMapSacleAsync(0);
-            if (MyMapView.Map.Layers.Count<0)
-              return;
-            MyMapView.SetView(MyMapView.Map.Layers[0].FullExtent);
-            //menuZoomIn_Click(null, null);
-        }
-
-        private async Task LoadShapefile(string path)
+        /// <summary>
+        /// 平移
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private  void PanBtn_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                // open shapefile table
-                var shapefile = await ShapefileTable.OpenAsync(path);
-                // clear existing map and spatial reference
-                if (MyMapView.Map.Layers.Any())
-                {
-                    // MyMapView.Map.Layers.Clear();
-                    MyMapView.Map = new Map();
-                }
-                // create feature layer based on the shapefile
-                var flayer = new FeatureLayer(shapefile)
-                {
-                    ID = shapefile.Name,
-                    DisplayName = path,
-                };
-
-                // Add the feature layer to the map
-                MyMapView.Map.Layers.Add(flayer);
+                MyMapView.Editor.Cancel.Execute(null);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Error creating feature layer: " + ex.Message, "Sample Error");
             }
+            this.MyMapView.Cursor = Cursors.Hand;
+            
+        }
+
+        /// <summary>
+        /// 缩放至全图
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private  void FullExtentBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MyMapView.Editor.Cancel.Execute(null);
+            }
+            catch (Exception)
+            {
+            }
+            this.MyMapView.Cursor = Cursors.Arrow;
+            if (MyMapView.Map.Layers.Count<0)
+              return;
+            MyMapView.SetView(MyMapView.Map.Layers[0].FullExtent);
         }
 
         #endregion
@@ -719,6 +659,10 @@ namespace FWS
             await overviewMap.SetViewAsync(viewpointExtent.GetCenter(), MyMapView.Scale*15);
         }
 
+        /// <summary>
+        /// 鹰眼地图显示调整
+        /// </summary>
+        /// <returns></returns>
         private async Task AddSingleGraphicAsync()
         {
             try
@@ -860,7 +804,11 @@ namespace FWS
         }
 
 
-
+        /// <summary>
+        /// 点击地图上 显示信息  如地震信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MyMapView_OnMapViewTapped(object sender, MapViewInputEventArgs e)
         {
             List<EarthquakeMsg> list = earthquake.EarthquakeMsgs;
